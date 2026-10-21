@@ -1,6 +1,6 @@
 ### Test Cases
 
-The suite of test cases are in `tests` and each file contains several cases.
+The suite of test cases are in `case` and each file contains several cases.
 
 ### Analysis Tool (Lazy_update Version)
 
@@ -10,7 +10,7 @@ The automated detection tool is implemented as a module of **RAPx** – a static
 
 Core implementation: **`./tool/`**
 
-Eager-update version: **`./tool-demo/`**
+Eager-update version: **`./tool-eager/`**
 
 #### Installation
 
