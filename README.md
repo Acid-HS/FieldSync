@@ -159,3 +159,9 @@ next:
 ```shell
 $pathtothisversion/cargo-rapx rapx check -f
 ```
+
+#### Experiment
+1. Create a new rust project **`test_tools`**
+2. Copy folder **`./case`**(with 163 cases) and `./report/report_for_cases/bench_tools_com.py` into **`test_tools`**
+3. Update the tool invocation command in `bench_tools_com.py` to a version compatible with your environment
+4. Run `bench_tools_com.py` to get an individual report for all cases and an aggregate one
