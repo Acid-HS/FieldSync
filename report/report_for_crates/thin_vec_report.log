@@ -1,0 +1,700 @@
+=== EXPERIMENT LOG: 2026-10-21 09:48:27.006616 ===
+
+[[TOOL_START: rapx]]
+STDOUT:
+warning: Use-after-free detected.
+    --> src/lib.rs:1085:13
+     |
+1082 | pub fn clear(&mut self) {
+1083 |         unsafe {
+1084 |             ptr::drop_in_place(&mut self[..]);
+1085 |             self.set_len(0); // could be the singleton
+     |             --------------- Use-after-free (confidence 99%): Location in file src/lib.rs line 1085.
+    | MIR detail: Value _3(_, src/lib.rs:1084) and _11(_, src/lib.rs:1085) are alias.
+    | MIR detail: _3(_, src/lib.rs:1084) is dropped at BB2(src/lib.rs:1084); _11(_, src/lib.rs:1085) is used at BB3(src/lib.rs:1085).
+1086 |         }
+1087 |     }
+     |
+warning: Dangling pointer detected.
+    --> src/lib.rs:1082:1
+     |
+1082 | / pub fn clear(&mut self) {
+1083 | |         unsafe {
+1084 | |             ptr::drop_in_place(&mut self[..]);
+1085 | |             self.set_len(0); // could be the singleton
+1086 | |         }
+1087 | |     }
+     | |_____- Dangling pointer (confidence 99%): Location in file src/lib.rs line 1082.
+    | MIR detail: Value _3(_, src/lib.rs:1084) and _1(self, src/lib.rs:1082) are alias.
+    | MIR detail: _3(_, src/lib.rs:1084) is dropped at BB2(src/lib.rs:1084); _1(self, src/lib.rs:1082) became dangling.
+     |
+warning: Dangling pointer detected during unwinding.
+    --> src/lib.rs:1586:1
+     |
+1586 | / pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_, I::IntoIter>
+1587 | |     where
+1588 | |         R: RangeBounds<usize>,
+1589 | |         I: IntoIterator<Item = T>,
+1590 | |     {
+1591 | |         Splice {
+1592 | |             drain: self.drain(range),
+1593 | |             replace_with: replace_with.into_iter(),
+1594 | |         }
+1595 | |     }
+     | |_____- Dangling pointer (confidence 99%): Location in file src/lib.rs line 1586.
+    | MIR detail: Value _4(_, src/lib.rs:1592) and _1(self, src/lib.rs:1586) are alias.
+    | MIR detail: _4(_, src/lib.rs:1592) is dropped at BB3(src/lib.rs:1594); _1(self, src/lib.rs:1586) became dangling.
+     |
+warning: Double free detected.
+    --> src/lib.rs:1915:1
+     |
+1915 | / fn drop_non_singleton<T>(this: &mut ThinVec<T>) {
+1916 | |             unsafe {
+1917 | |                 ptr::drop_in_place(&mut this[..]);
+1918 | |
+1919 | |                 if this.uses_stack_allocated_buffer() {
+1920 | |                     return;
+1921 | |                 }
+1922 | |
+1923 | |                 dealloc(this.ptr() as *mut u8, layout::<T>(this.capacity()))
+1924 | |             }
+1925 | |         }
+     | |_________- Double free (confidence 99%): Location in file src/lib.rs line 1915.
+    | MIR detail: Value _3(_, src/lib.rs:1917) and _14(_, src/lib.rs:1923) are alias.
+    | MIR detail: _3(_, src/lib.rs:1917) is dropped at BB2(src/lib.rs:1917); _14(_, src/lib.rs:1923) is dropped at BB9(src/lib.rs:1923).
+     |
+warning: Use-after-free detected.
+    --> src/lib.rs:1923:25
+     |
+1915 | fn drop_non_singleton<T>(this: &mut ThinVec<T>) {
+1916 |             unsafe {
+1917 |                 ptr::drop_in_place(&mut this[..]);
+1918 |
+1919 |                 if this.uses_stack_allocated_buffer() {
+1920 |                     return;
+1921 |                 }
+1922 |
+1923 |                 dealloc(this.ptr() as *mut u8, layout::<T>(this.capacity()))
+     |                         ---------- Use-after-free (confidence 99%): Location in file src/lib.rs line 1923.
+    | MIR detail: Value _3(_, src/lib.rs:1917) and _16(_, src/lib.rs:1923) are alias.
+    | MIR detail: _3(_, src/lib.rs:1917) is dropped at BB2(src/lib.rs:1917); _16(_, src/lib.rs:1923) is used at BB6(src/lib.rs:1923).
+1924 |             }
+1925 |         }
+     |
+warning: Use-after-free detected.
+    --> src/lib.rs:1919:20
+     |
+1915 | fn drop_non_singleton<T>(this: &mut ThinVec<T>) {
+1916 |             unsafe {
+1917 |                 ptr::drop_in_place(&mut this[..]);
+1918 |
+1919 |                 if this.uses_stack_allocated_buffer() {
+     |                    ---------------------------------- Use-after-free (confidence 99%): Location in file src/lib.rs line 1919.
+    | MIR detail: Value _3(_, src/lib.rs:1917) and _12(_, src/lib.rs:1919) are alias.
+    | MIR detail: _3(_, src/lib.rs:1917) is dropped at BB2(src/lib.rs:1917); _12(_, src/lib.rs:1919) is used at BB3(src/lib.rs:1919).
+1920 |                     return;
+1921 |                 }
+1922 |
+1923 |                 dealloc(this.ptr() as *mut u8, layout::<T>(this.capacity()))
+1924 |             }
+1925 |         }
+     |
+warning: Use-after-free detected.
+    --> src/lib.rs:1923:17
+     |
+1915 | fn drop_non_singleton<T>(this: &mut ThinVec<T>) {
+1916 |             unsafe {
+1917 |                 ptr::drop_in_place(&mut this[..]);
+1918 |
+1919 |                 if this.uses_stack_allocated_buffer() {
+1920 |                     return;
+1921 |                 }
+1922 |
+1923 |                 dealloc(this.ptr() as *mut u8, layout::<T>(this.capacity()))
+     |                 ------------------------------------------------------------ Use-after-free (confidence 99%): Location in file src/lib.rs line 1923.
+    | MIR detail: Value _3(_, src/lib.rs:1917) and _14(_, src/lib.rs:1923) are alias.
+    | MIR detail: _3(_, src/lib.rs:1917) is dropped at BB2(src/lib.rs:1917); _14(_, src/lib.rs:1923) is used at BB9(src/lib.rs:1923).
+1924 |             }
+1925 |         }
+     |
+warning: Use-after-free detected.
+    --> src/lib.rs:1923:60
+     |
+1915 | fn drop_non_singleton<T>(this: &mut ThinVec<T>) {
+1916 |             unsafe {
+1917 |                 ptr::drop_in_place(&mut this[..]);
+1918 |
+1919 |                 if this.uses_stack_allocated_buffer() {
+1920 |                     return;
+1921 |                 }
+1922 |
+1923 |                 dealloc(this.ptr() as *mut u8, layout::<T>(this.capacity()))
+     |                                                            --------------- Use-after-free (confidence 99%): Location in file src/lib.rs line 1923.
+    | MIR detail: Value _3(_, src/lib.rs:1917) and _19(_, src/lib.rs:1923) are alias.
+    | MIR detail: _3(_, src/lib.rs:1917) is dropped at BB2(src/lib.rs:1917); _19(_, src/lib.rs:1923) is used at BB7(src/lib.rs:1923).
+1924 |             }
+1925 |         }
+     |
+warning: Double free detected.
+    --> src/lib.rs:2544:1
+     |
+2544 | / fn drop_non_singleton<T>(this: &mut IntoIter<T>) {
+2545 | |             unsafe {
+2546 | |                 let mut vec = mem::replace(&mut this.vec, ThinVec::new());
+2547 | |                 ptr::drop_in_place(&mut vec[this.start..]);
+2548 | |                 vec.set_len_non_singleton(0)
+2549 | |             }
+2550 | |         }
+     | |_________- Double free (confidence 99%): Location in file src/lib.rs line 2544.
+    | MIR detail: Value _7(_, src/lib.rs:2547) and _2(vec, src/lib.rs:2546) are alias.
+    | MIR detail: _7(_, src/lib.rs:2547) is dropped at BB4(src/lib.rs:2547); _2(vec, src/lib.rs:2546) is dropped at BB6(src/lib.rs:2549).
+     |
+warning: Double free detected during unwinding.
+    --> src/lib.rs:2544:1
+     |
+2544 | / fn drop_non_singleton<T>(this: &mut IntoIter<T>) {
+2545 | |             unsafe {
+2546 | |                 let mut vec = mem::replace(&mut this.vec, ThinVec::new());
+2547 | |                 ptr::drop_in_place(&mut vec[this.start..]);
+2548 | |                 vec.set_len_non_singleton(0)
+2549 | |             }
+2550 | |         }
+     | |_________- Double free (confidence 99%): Location in file src/lib.rs line 2544.
+    | MIR detail: Value _7(_, src/lib.rs:2547) and _2(vec, src/lib.rs:2546) are alias.
+    | MIR detail: _7(_, src/lib.rs:2547) is dropped at BB4(src/lib.rs:2547); _2(vec, src/lib.rs:2546) is dropped at BB8(src/lib.rs:2549).
+     |
+warning: Use-after-free detected.
+    --> src/lib.rs:2548:17
+     |
+2544 | fn drop_non_singleton<T>(this: &mut IntoIter<T>) {
+2545 |             unsafe {
+2546 |                 let mut vec = mem::replace(&mut this.vec, ThinVec::new());
+2547 |                 ptr::drop_in_place(&mut vec[this.start..]);
+2548 |                 vec.set_len_non_singleton(0)
+     |                 ---------------------------- Use-after-free (confidence 99%): Location in file src/lib.rs line 2548.
+    | MIR detail: Value _7(_, src/lib.rs:2547) and _15(_, src/lib.rs:2548) are alias.
+    | MIR detail: _7(_, src/lib.rs:2547) is dropped at BB4(src/lib.rs:2547); _15(_, src/lib.rs:2548) is used at BB5(src/lib.rs:2548).
+2549 |             }
+2550 |         }
+     |
+warning: Use-after-free detected.
+    --> src/lib.rs:2548:17
+     |
+2544 | fn drop_non_singleton<T>(this: &mut IntoIter<T>) {
+2545 |             unsafe {
+2546 |                 let mut vec = mem::replace(&mut this.vec, ThinVec::new());
+2547 |                 ptr::drop_in_place(&mut vec[this.start..]);
+2548 |                 vec.set_len_non_singleton(0)
+     |                 --- Use-after-free (confidence 99%): Location in file src/lib.rs line 2548.
+    | MIR detail: Value _7(_, src/lib.rs:2547) and _2(vec, src/lib.rs:2546) are alias.
+    | MIR detail: _7(_, src/lib.rs:2547) is dropped at BB4(src/lib.rs:2547); _2(vec, src/lib.rs:2546) is used at BB5(src/lib.rs:2548).
+2549 |             }
+2550 |         }
+     |
+
+STDERR:
+    Checking thin-vec v0.2.15 (/Users/acidsun/thin-vec)
+09:48:27|RAP|INFO|: Start analysis with RAPx.
+09:48:27|RAP|INFO|: ================================
+09:48:27|RAP|INFO|: Aliases found: {DefId(0:151 ~ thin_vec[c2e1]::{impl#10}::deref_mut): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:2609 ~ core[b783]::ptr::non_null::{impl#3}::as_mut): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:831 ~ thin_vec[c2e1]::{impl#130}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:352 ~ thin_vec[c2e1]::{impl#60}::move_tail): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:9757 ~ core[b783]::iter::traits::iterator::Iterator::by_ref): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:528 ~ thin_vec[c2e1]::{impl#84}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:100 ~ thin_vec[c2e1]::{impl#5}::reserve): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:704 ~ thin_vec[c2e1]::{impl#111}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:2583 ~ core[b783]::ptr::non_null::{impl#2}::dangling): MopFnAliasPairs { arg_size: 0, alias_set: {} }, DefId(0:125 ~ thin_vec[c2e1]::{impl#5}::extract_if::slice_range): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:326 ~ thin_vec[c2e1]::{impl#53}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:2054 ~ core[b783]::intrinsics::typed_swap_nonoverlapping): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:502 ~ thin_vec[c2e1]::{impl#80}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:225 ~ thin_vec[c2e1]::{impl#29}::from_iter): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:10939 ~ core[b783]::panicking::assert_failed): MopFnAliasPairs { arg_size: 4, alias_set: {} }, DefId(0:678 ~ thin_vec[c2e1]::{impl#107}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:99 ~ thin_vec[c2e1]::{impl#5}::as_mut_slice): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:250 ~ thin_vec[c2e1]::{impl#36}::from): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:10511 ~ core[b783]::option::{impl#0}::map): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:124 ~ thin_vec[c2e1]::{impl#5}::extract_if::slice_index_fail): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:376 ~ thin_vec[c2e1]::{impl#63}::flush): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:2607 ~ core[b783]::ptr::non_null::{impl#3}::as_ref): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:174 ~ thin_vec[c2e1]::{impl#17}::partial_cmp): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:476 ~ thin_vec[c2e1]::{impl#76}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:2355 ~ core[b783]::mem::replace): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:350 ~ thin_vec[c2e1]::{impl#60}::fill): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:652 ~ thin_vec[c2e1]::{impl#103}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:27123 ~ core[b783]::ptr::non_null::{impl#3}::new_unchecked::precondition_check): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:14311 ~ core[b783]::slice::raw::from_raw_parts_mut): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:14462 ~ core[b783]::slice::{impl#0}::as_mut_ptr): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:98 ~ thin_vec[c2e1]::{impl#5}::as_slice): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:375 ~ thin_vec[c2e1]::{impl#63}::write_all): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:274 ~ thin_vec[c2e1]::{impl#40}::size_hint): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:1851 ~ core[b783]::intrinsics::caller_location): MopFnAliasPairs { arg_size: 0, alias_set: {} }, DefId(2:9805 ~ core[b783]::iter::traits::iterator::Iterator::fold): MopFnAliasPairs { arg_size: 3, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:2606 ~ core[b783]::ptr::non_null::{impl#3}::as_ptr): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:148 ~ thin_vec[c2e1]::{impl#9}::deref): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:450 ~ thin_vec[c2e1]::{impl#72}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:626 ~ thin_vec[c2e1]::{impl#99}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:374 ~ thin_vec[c2e1]::{impl#63}::write): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:97 ~ thin_vec[c2e1]::{impl#5}::clear): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:273 ~ thin_vec[c2e1]::{impl#40}::next): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:424 ~ thin_vec[c2e1]::{impl#68}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:3033 ~ core[b783]::ptr::swap_nonoverlapping_bytes::swap_nonoverlapping_chunks): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:600 ~ thin_vec[c2e1]::{impl#95}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:323 ~ thin_vec[c2e1]::{impl#52}::drop): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:46 ~ thin_vec[c2e1]::{impl#1}::unwrap_cap_overflow): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:801 ~ thin_vec[c2e1]::{impl#126}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:222 ~ thin_vec[c2e1]::{impl#28}::default): MopFnAliasPairs { arg_size: 0, alias_set: {} }, DefId(0:96 ~ thin_vec[c2e1]::{impl#5}::truncate): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:398 ~ thin_vec[c2e1]::{impl#64}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:247 ~ thin_vec[c2e1]::{impl#35}::from): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:121 ~ thin_vec[c2e1]::{impl#5}::extract_if): MopFnAliasPairs { arg_size: 3, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [5], right_local: 3, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:3032 ~ core[b783]::ptr::swap_nonoverlapping_bytes): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:574 ~ thin_vec[c2e1]::{impl#91}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:775 ~ thin_vec[c2e1]::{impl#122}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:347 ~ thin_vec[c2e1]::{impl#59}::drop): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:14308 ~ core[b783]::slice::raw::from_raw_parts): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:372 ~ thin_vec[c2e1]::{impl#62}::drop): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:95 ~ thin_vec[c2e1]::{impl#5}::swap_remove): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:548 ~ thin_vec[c2e1]::{impl#87}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:749 ~ thin_vec[c2e1]::{impl#118}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:170 ~ thin_vec[c2e1]::{impl#16}::hash): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:2930 ~ core[b783]::ptr::mut_ptr::{impl#0}::sub): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:2351 ~ core[b783]::mem::swap): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:522 ~ thin_vec[c2e1]::{impl#83}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:94 ~ thin_vec[c2e1]::{impl#5}::remove): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:723 ~ thin_vec[c2e1]::{impl#114}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(1:8660 ~ std[7e52]::panicking::begin_panic): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:27194 ~ core[b783]::ub_checks::maybe_is_nonoverlapping::runtime): MopFnAliasPairs { arg_size: 4, alias_set: {} }, DefId(0:295 ~ thin_vec[c2e1]::{impl#47}::clone): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:194 ~ thin_vec[c2e1]::{impl#22}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:496 ~ thin_vec[c2e1]::{impl#79}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:2073 ~ core[b783]::intrinsics::size_of_val): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:93 ~ thin_vec[c2e1]::{impl#5}::insert): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:244 ~ thin_vec[c2e1]::{impl#34}::from): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:697 ~ thin_vec[c2e1]::{impl#110}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:118 ~ thin_vec[c2e1]::{impl#5}::splice): MopFnAliasPairs { arg_size: 3, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 3, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:27168 ~ core[b783]::ptr::swap_nonoverlapping::precondition_check): MopFnAliasPairs { arg_size: 5, alias_set: {} }, DefId(0:269 ~ thin_vec[c2e1]::{impl#39}::as_raw_mut_slice): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:143 ~ thin_vec[c2e1]::{impl#8}::drop::drop_non_singleton): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:2928 ~ core[b783]::ptr::mut_ptr::{impl#0}::add): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:470 ~ thin_vec[c2e1]::{impl#75}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:42 ~ thin_vec[c2e1]::{impl#0}::unwrap_cap_overflow): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:218 ~ thin_vec[c2e1]::{impl#27}::clone::clone_non_singleton): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:671 ~ thin_vec[c2e1]::{impl#106}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:92 ~ thin_vec[c2e1]::{impl#5}::pop): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:268 ~ thin_vec[c2e1]::{impl#39}::as_mut_slice): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:3028 ~ core[b783]::ptr::swap_chunk): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:142 ~ thin_vec[c2e1]::{impl#8}::drop): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:444 ~ thin_vec[c2e1]::{impl#71}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:167 ~ thin_vec[c2e1]::{impl#15}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:645 ~ thin_vec[c2e1]::{impl#102}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:217 ~ thin_vec[c2e1]::{impl#27}::clone): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:368 ~ thin_vec[c2e1]::{impl#61}::size_hint): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:91 ~ thin_vec[c2e1]::{impl#5}::push_unchecked): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:821 ~ thin_vec[c2e1]::{impl#129}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:27166 ~ core[b783]::ptr::copy::precondition_check): MopFnAliasPairs { arg_size: 4, alias_set: {} }, DefId(0:116 ~ thin_vec[c2e1]::{impl#5}::drain): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:418 ~ thin_vec[c2e1]::{impl#67}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:267 ~ thin_vec[c2e1]::{impl#39}::as_slice): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:292 ~ thin_vec[c2e1]::{impl#46}::as_ref): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:2624 ~ core[b783]::ptr::non_null::{impl#3}::offset_from_unsigned): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:619 ~ thin_vec[c2e1]::{impl#98}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:342 ~ thin_vec[c2e1]::{impl#57}::next_back): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:795 ~ thin_vec[c2e1]::{impl#125}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:65 ~ thin_vec[c2e1]::header_with_capacity): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:367 ~ thin_vec[c2e1]::{impl#61}::next): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:90 ~ thin_vec[c2e1]::{impl#5}::push): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:241 ~ thin_vec[c2e1]::{impl#33}::from): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:115 ~ thin_vec[c2e1]::{impl#5}::append): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:27165 ~ core[b783]::ptr::copy_nonoverlapping::precondition_check): MopFnAliasPairs { arg_size: 5, alias_set: {} }, DefId(0:593 ~ thin_vec[c2e1]::{impl#94}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:769 ~ thin_vec[c2e1]::{impl#121}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:89 ~ thin_vec[c2e1]::{impl#5}::set_len_non_singleton): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:114 ~ thin_vec[c2e1]::{impl#5}::split_off): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:567 ~ thin_vec[c2e1]::{impl#90}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:15535 ~ core[b783]::str::{impl#0}::as_bytes): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:139 ~ thin_vec[c2e1]::{impl#7}::dedup::{closure#0}): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:743 ~ thin_vec[c2e1]::{impl#117}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:189 ~ thin_vec[c2e1]::{impl#21}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:63 ~ thin_vec[c2e1]::layout): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:214 ~ thin_vec[c2e1]::{impl#26}::into_iter): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:41410 ~ core[b783]::slice::raw::from_raw_parts_mut::precondition_check): MopFnAliasPairs { arg_size: 4, alias_set: {} }, DefId(0:88 ~ thin_vec[c2e1]::{impl#5}::set_len): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:14477 ~ core[b783]::slice::{impl#0}::iter_mut): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:541 ~ thin_vec[c2e1]::{impl#86}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:3024 ~ core[b783]::ptr::swap_nonoverlapping): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:138 ~ thin_vec[c2e1]::{impl#7}::dedup): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:717 ~ thin_vec[c2e1]::{impl#113}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:289 ~ thin_vec[c2e1]::{impl#45}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:163 ~ thin_vec[c2e1]::{impl#14}::extend): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:314 ~ thin_vec[c2e1]::{impl#49}::next_back::{closure#0}): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:339 ~ thin_vec[c2e1]::{impl#56}::size_hint): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:515 ~ thin_vec[c2e1]::{impl#82}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:41409 ~ core[b783]::slice::raw::from_raw_parts::precondition_check): MopFnAliasPairs { arg_size: 4, alias_set: {} }, DefId(0:87 ~ thin_vec[c2e1]::{impl#5}::has_capacity): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:14476 ~ core[b783]::slice::{impl#0}::iter): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:691 ~ thin_vec[c2e1]::{impl#109}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:112 ~ thin_vec[c2e1]::{impl#5}::dedup_by): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:313 ~ thin_vec[c2e1]::{impl#49}::next_back): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:36 ~ thin_vec[c2e1]::capacity_overflow): MopFnAliasPairs { arg_size: 0, alias_set: {} }, DefId(0:338 ~ thin_vec[c2e1]::{impl#56}::next): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:489 ~ thin_vec[c2e1]::{impl#78}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:9718 ~ core[b783]::iter::traits::iterator::Iterator::for_each): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:61 ~ thin_vec[c2e1]::alloc_align): MopFnAliasPairs { arg_size: 0, alias_set: {} }, DefId(2:2091 ~ core[b783]::intrinsics::copy): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:86 ~ thin_vec[c2e1]::{impl#5}::capacity): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:665 ~ thin_vec[c2e1]::{impl#105}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:237 ~ thin_vec[c2e1]::{impl#32}::from): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:111 ~ thin_vec[c2e1]::{impl#5}::dedup_by_key::{closure#0}): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(2:3022 ~ core[b783]::ptr::swap): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:2594 ~ core[b783]::ptr::non_null::{impl#3}::new_unchecked): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:3047 ~ core[b783]::ptr::write): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:463 ~ thin_vec[c2e1]::{impl#74}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:35 ~ thin_vec[c2e1]::impl_details::is_auto): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:639 ~ thin_vec[c2e1]::{impl#101}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:85 ~ thin_vec[c2e1]::{impl#5}::is_empty): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:2996 ~ core[b783]::ptr::drop_in_place): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:135 ~ thin_vec[c2e1]::{impl#6}::extend_from_slice): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:437 ~ thin_vec[c2e1]::{impl#70}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:160 ~ thin_vec[c2e1]::{impl#13}::as_ref): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:613 ~ thin_vec[c2e1]::{impl#97}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:34 ~ thin_vec[c2e1]::impl_details::unpack_capacity): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:185 ~ thin_vec[c2e1]::{impl#20}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:2039 ~ core[b783]::intrinsics::ptr_offset_from_unsigned): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:59 ~ thin_vec[c2e1]::padding): MopFnAliasPairs { arg_size: 0, alias_set: {} }, DefId(3:134 ~ alloc[9043]::alloc::realloc): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:814 ~ thin_vec[c2e1]::{impl#128}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:84 ~ thin_vec[c2e1]::{impl#5}::len): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:9917 ~ core[b783]::iter::traits::iterator::Iterator::cloned): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:411 ~ thin_vec[c2e1]::{impl#66}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:3020 ~ core[b783]::ptr::slice_from_raw_parts_mut): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:134 ~ thin_vec[c2e1]::{impl#6}::resize): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:587 ~ thin_vec[c2e1]::{impl#93}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:285 ~ thin_vec[c2e1]::{impl#44}::drop::drop_non_singleton): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:9690 ~ core[b783]::iter::traits::iterator::Iterator::size_hint): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:33 ~ thin_vec[c2e1]::impl_details::pack_capacity_and_auto): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(1:8121 ~ std[7e52]::sys::backtrace::__rust_end_short_backtrace): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(3:133 ~ alloc[9043]::alloc::dealloc): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:788 ~ thin_vec[c2e1]::{impl#124}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:9740 ~ core[b783]::iter::traits::iterator::Iterator::take): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:83 ~ thin_vec[c2e1]::{impl#5}::header_mut): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:108 ~ thin_vec[c2e1]::{impl#5}::dedup_by_key): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:561 ~ thin_vec[c2e1]::{impl#89}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:284 ~ thin_vec[c2e1]::{impl#44}::drop): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:309 ~ thin_vec[c2e1]::{impl#48}::size_hint): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:762 ~ thin_vec[c2e1]::{impl#120}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:32 ~ thin_vec[c2e1]::impl_details::assert_size): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:334 ~ thin_vec[c2e1]::{impl#55}::as_ref): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:57 ~ thin_vec[c2e1]::alloc_size): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(3:132 ~ alloc[9043]::alloc::alloc): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:208 ~ thin_vec[c2e1]::{impl#25}::into_iter): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:82 ~ thin_vec[c2e1]::{impl#5}::data_raw): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:14471 ~ core[b783]::slice::{impl#0}::swap): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:535 ~ thin_vec[c2e1]::{impl#85}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:258 ~ thin_vec[c2e1]::{impl#38}::try_from): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:3043 ~ core[b783]::ptr::read): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:736 ~ thin_vec[c2e1]::{impl#116}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:157 ~ thin_vec[c2e1]::{impl#12}::borrow_mut): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:308 ~ thin_vec[c2e1]::{impl#48}::next::{closure#0}): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:509 ~ thin_vec[c2e1]::{impl#81}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:81 ~ thin_vec[c2e1]::{impl#5}::header): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:232 ~ thin_vec[c2e1]::{impl#31}::from): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:2992 ~ core[b783]::ptr::copy): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:106 ~ thin_vec[c2e1]::{impl#5}::retain_mut): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:27131 ~ core[b783]::ptr::const_ptr::{impl#0}::offset_from_unsigned::precondition_check): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:710 ~ thin_vec[c2e1]::{impl#112}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:131 ~ thin_vec[c2e1]::{impl#5}::has_allocation): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:307 ~ thin_vec[c2e1]::{impl#48}::next): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:181 ~ thin_vec[c2e1]::{impl#19}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:483 ~ thin_vec[c2e1]::{impl#77}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:14419 ~ core[b783]::slice::{impl#0}::len): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:55 ~ thin_vec[c2e1]::{impl#2}::is_auto): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:80 ~ thin_vec[c2e1]::{impl#5}::ptr): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:684 ~ thin_vec[c2e1]::{impl#108}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:105 ~ thin_vec[c2e1]::{impl#5}::retain::{closure#0}): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:130 ~ thin_vec[c2e1]::{impl#5}::uses_stack_allocated_buffer): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:457 ~ thin_vec[c2e1]::{impl#73}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:12354 ~ core[b783]::fmt::{impl#4}::new): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [1], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:54 ~ thin_vec[c2e1]::{impl#2}::set_cap_and_auto): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:658 ~ thin_vec[c2e1]::{impl#104}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:12253 ~ core[b783]::fmt::rt::{impl#0}::new_display): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:79 ~ thin_vec[c2e1]::{impl#5}::with_capacity): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:2990 ~ core[b783]::ptr::copy_nonoverlapping): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(2:41124 ~ core[b783]::slice::iter::{impl#164}::make_slice): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:129 ~ thin_vec[c2e1]::{impl#5}::is_auto_array): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:431 ~ thin_vec[c2e1]::{impl#69}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:154 ~ thin_vec[c2e1]::{impl#11}::borrow): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:13536 ~ core[b783]::slice::iter::{impl#6}::as_slice): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:632 ~ thin_vec[c2e1]::{impl#100}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:53 ~ thin_vec[c2e1]::{impl#2}::cap): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:330 ~ thin_vec[c2e1]::{impl#54}::as_slice): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:2939 ~ core[b783]::ptr::mut_ptr::{impl#0}::copy_to): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:808 ~ thin_vec[c2e1]::{impl#127}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:78 ~ thin_vec[c2e1]::{impl#5}::new): MopFnAliasPairs { arg_size: 0, alias_set: {} }, DefId(0:229 ~ thin_vec[c2e1]::{impl#30}::from): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:103 ~ thin_vec[c2e1]::{impl#5}::retain): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:405 ~ thin_vec[c2e1]::{impl#65}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:128 ~ thin_vec[c2e1]::{impl#5}::is_singleton): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:2888 ~ core[b783]::ptr::mut_ptr::{impl#0}::is_null): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:606 ~ thin_vec[c2e1]::{impl#96}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:13535 ~ core[b783]::slice::iter::{impl#6}::new): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:782 ~ thin_vec[c2e1]::{impl#123}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:52 ~ thin_vec[c2e1]::{impl#2}::set_len): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:102 ~ thin_vec[c2e1]::{impl#5}::shrink_to_fit): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:127 ~ thin_vec[c2e1]::{impl#5}::reallocate): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:580 ~ thin_vec[c2e1]::{impl#92}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:756 ~ thin_vec[c2e1]::{impl#119}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:177 ~ thin_vec[c2e1]::{impl#18}::cmp): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:51 ~ thin_vec[c2e1]::{impl#2}::len): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:202 ~ thin_vec[c2e1]::{impl#24}::into_iter): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:13559 ~ core[b783]::slice::iter::{impl#12}::new): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:2836 ~ core[b783]::ptr::const_ptr::{impl#0}::is_aligned_to): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:9758 ~ core[b783]::iter::traits::iterator::Iterator::collect): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:101 ~ thin_vec[c2e1]::{impl#5}::reserve_exact): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:252 ~ thin_vec[c2e1]::{impl#37}::from): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:9632 ~ core[b783]::iter::traits::exact_size::ExactSizeIterator::len): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:554 ~ thin_vec[c2e1]::{impl#88}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:277 ~ thin_vec[c2e1]::{impl#41}::next_back): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:3037 ~ core[b783]::ptr::swap_nonoverlapping_bytes::swap_nonoverlapping_short): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:730 ~ thin_vec[c2e1]::{impl#115}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }}
+09:48:27|RAP|WARN|: Find a use-after-free bug TyBug { drop_spot: LocalSpot { bb: Some(2), local: Some(3) }, trigger_info: LocalSpot { bb: Some(3), local: Some(11) }, prop_chain: [11], span: src/lib.rs:1085:13: 1085:28 (#0), confidence: 99 }; add to records
+09:48:27|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:48:27|RAP|WARN|: Use-after-free detected in function "clear"
+09:48:27|RAP|WARN|: Dangling pointer detected in function "clear"
+09:48:28|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:48:28|RAP|WARN|: Dangling pointer detected during unwinding in function "splice"
+09:48:28|RAP|WARN|: Find a use-after-free bug TyBug { drop_spot: LocalSpot { bb: Some(2), local: Some(3) }, trigger_info: LocalSpot { bb: Some(3), local: Some(12) }, prop_chain: [12, 12], span: src/lib.rs:1919:20: 1919:54 (#0), confidence: 99 }; add to records
+09:48:28|RAP|WARN|: Find a use-after-free bug TyBug { drop_spot: LocalSpot { bb: Some(2), local: Some(3) }, trigger_info: LocalSpot { bb: Some(6), local: Some(16) }, prop_chain: [12, 12, 16, 16], span: src/lib.rs:1923:25: 1923:35 (#0), confidence: 99 }; add to records
+09:48:28|RAP|WARN|: Find a use-after-free bug TyBug { drop_spot: LocalSpot { bb: Some(2), local: Some(3) }, trigger_info: LocalSpot { bb: Some(7), local: Some(19) }, prop_chain: [12, 12, 16, 16, 19], span: src/lib.rs:1923:60: 1923:75 (#0), confidence: 99 }; add to records
+09:48:28|RAP|WARN|: Find a use-after-free bug TyBug { drop_spot: LocalSpot { bb: Some(2), local: Some(3) }, trigger_info: LocalSpot { bb: Some(9), local: Some(14) }, prop_chain: [12, 12, 16, 16, 14], span: src/lib.rs:1923:17: 1923:77 (#0), confidence: 99 }; add to records
+09:48:28|RAP|INFO|: Find a double free bug 14; add to records.
+09:48:28|RAP|WARN|: Double free detected in function "drop_non_singleton"
+09:48:28|RAP|WARN|: Use-after-free detected in function "drop_non_singleton"
+09:48:28|RAP|INFO|: Find a double free bug 2 during unwinding; add to records.
+09:48:28|RAP|WARN|: Find a use-after-free bug TyBug { drop_spot: LocalSpot { bb: Some(4), local: Some(7) }, trigger_info: LocalSpot { bb: Some(5), local: Some(2) }, prop_chain: [2, 2], span: src/lib.rs:2548:17: 2548:20 (#0), confidence: 99 }; add to records
+09:48:28|RAP|WARN|: Find a use-after-free bug TyBug { drop_spot: LocalSpot { bb: Some(4), local: Some(7) }, trigger_info: LocalSpot { bb: Some(5), local: Some(15) }, prop_chain: [2, 2, 15, 15], span: src/lib.rs:2548:17: 2548:45 (#0), confidence: 99 }; add to records
+09:48:28|RAP|INFO|: Find a double free bug 2; add to records.
+09:48:28|RAP|WARN|: Double free detected in function "drop_non_singleton"
+09:48:28|RAP|WARN|: Double free detected in function "drop_non_singleton"
+09:48:28|RAP|WARN|: Use-after-free detected in function "drop_non_singleton"
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.88s
+
+[[TOOL_END: rapx]]
+
+[[TOOL_START: safedrop]]
+STDOUT:
+
+STDERR:
+warning: unnecessary `unsafe` block
+   --> src/lib.rs:866:9
+    |
+863 |     unsafe fn push_unchecked(&mut self, val: T) {
+    |     ------------------------------------------- because it's nested under this `unsafe` fn
+...
+866 |         unsafe {
+    |         ^^^^^^ unnecessary `unsafe` block
+    |
+    = note: `#[warn(unused_unsafe)]` on by default
+    = note: this `unsafe` block does contain unsafe operations, but those are already allowed in an `unsafe fn`
+    = note: `#[allow(unsafe_op_in_unsafe_fn)]` on by default
+
+warning: unnecessary `unsafe` block
+    --> src/lib.rs:2939:19
+     |
+2938 |     unsafe fn fill<I: Iterator<Item = T>>(&mut self, replace_with: &mut I) -> bool {
+     |     ------------------------------------------------------------------------------ because it's nested under this `unsafe` fn
+2939 |         let vec = unsafe { self.vec.as_mut() };
+     |                   ^^^^^^ unnecessary `unsafe` block
+     |
+     = note: this `unsafe` block does contain unsafe operations, but those are already allowed in an `unsafe fn`
+
+warning: unnecessary `unsafe` block
+    --> src/lib.rs:2942:27
+     |
+2938 |     unsafe fn fill<I: Iterator<Item = T>>(&mut self, replace_with: &mut I) -> bool {
+     |     ------------------------------------------------------------------------------ because it's nested under this `unsafe` fn
+...
+2942 |         let range_slice = unsafe {
+     |                           ^^^^^^ unnecessary `unsafe` block
+     |
+     = note: this `unsafe` block does contain unsafe operations, but those are already allowed in an `unsafe fn`
+
+warning: unnecessary `unsafe` block
+    --> src/lib.rs:2948:17
+     |
+2938 |     unsafe fn fill<I: Iterator<Item = T>>(&mut self, replace_with: &mut I) -> bool {
+     |     ------------------------------------------------------------------------------ because it's nested under this `unsafe` fn
+...
+2948 |                 unsafe { ptr::write(place, new_item) };
+     |                 ^^^^^^ unnecessary `unsafe` block
+     |
+     = note: this `unsafe` block does contain unsafe operations, but those are already allowed in an `unsafe fn`
+
+warning: unnecessary `unsafe` block
+    --> src/lib.rs:2959:19
+     |
+2958 |     unsafe fn move_tail(&mut self, additional: usize) {
+     |     ------------------------------------------------- because it's nested under this `unsafe` fn
+2959 |         let vec = unsafe { self.vec.as_mut() };
+     |                   ^^^^^^ unnecessary `unsafe` block
+     |
+     = note: this `unsafe` block does contain unsafe operations, but those are already allowed in an `unsafe fn`
+
+warning: unnecessary `unsafe` block
+    --> src/lib.rs:2964:9
+     |
+2958 |     unsafe fn move_tail(&mut self, additional: usize) {
+     |     ------------------------------------------------- because it's nested under this `unsafe` fn
+...
+2964 |         unsafe {
+     |         ^^^^^^ unnecessary `unsafe` block
+     |
+     = note: this `unsafe` block does contain unsafe operations, but those are already allowed in an `unsafe fn`
+
+warning: 6 warnings emitted
+
+
+[[TOOL_END: safedrop]]
+
+[[TOOL_START: charon_rudra]]
+STDOUT:
+
+2026-10-21 09:48:33.060329 |INFO | [rudra-progress] UnsafeDataflow analysis started
+2026-10-21 09:48:33.065895 |INFO | [rudra-progress] UnsafeDataflow analysis finished
+
+STDERR:
+   Compiling thin-vec v0.2.15 (/Users/acidsun/thin-vec)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.89s
+
+Warning (UnsafeDataflow:/WriteFlow): Potential unsafe dataflow issue in `thin_vec::{thin_vec::ThinVec<T>[@TraitClause0]}#5::push_unchecked`
+-> src/lib.rs:863:4-872:5
+unsafe fn push_unchecked(&mut self, val: T) {
+        let old_len = [0m[36mself.len()[0m;
+        debug_assert!(old_len < [0m[36mself.capacity()[0m);
+        unsafe {
+            [0m[33mptr::write([0m[36m[0m[36mself.data_raw()[0m[36m.add(old_len)[0m[33m, val)[0m;
+
+            // SAFETY: capacity > len >= 0, so capacity != 0, so this is not a singleton.
+            [0m[36mself.set_len_non_singleton(old_len + 1)[0m;
+        }
+[0m
+Warning (UnsafeDataflow:/ReadFlow): Potential unsafe dataflow issue in `thin_vec::{thin_vec::ThinVec<T>[@TraitClause0]}#5::pop`
+-> src/lib.rs:886:4-896:5
+pub fn pop(&mut self) -> Option<T> {
+        let old_len = [0m[36mself.len()[0m;
+        if old_len == 0 {
+            return None;
+        }
+
+        unsafe {
+            [0m[36mself.set_len_non_singleton(old_len - 1)[0m;
+            Some([0m[31mptr::read([0m[36m[0m[36mself.data_raw()[0m[36m.add(old_len - 1)[0m[31m)[0m)
+        }
+[0m
+Warning (UnsafeDataflow:/CopyFlow/WriteFlow): Potential unsafe dataflow issue in `thin_vec::{thin_vec::ThinVec<T>[@TraitClause0]}#5::insert`
+-> src/lib.rs:916:4-929:5
+pub fn insert(&mut self, idx: usize, elem: T) {
+        let old_len = [0m[36mself.len()[0m;
+
+        assert!(idx <= old_len, "Index out of bounds");
+        if old_len == [0m[36mself.capacity()[0m {
+            [0m[36mself.reserve(1)[0m;
+        }
+        unsafe {
+            let ptr = [0m[36mself.data_raw()[0m;
+            [0m[31mptr::copy([0m[36mptr.add(idx)[0m[31m, [0m[36mptr.add(idx + 1)[0m[31m, old_len - idx)[0m;
+            [0m[33mptr::write([0m[36mptr.add(idx)[0m[33m, elem)[0m;
+            [0m[36mself.set_len_non_singleton(old_len + 1)[0m;
+        }
+[0m
+Warning (UnsafeDataflow:/ReadFlow/CopyFlow): Potential unsafe dataflow issue in `thin_vec::{thin_vec::ThinVec<T>[@TraitClause0]}#5::remove`
+-> src/lib.rs:954:4-966:5
+pub fn remove(&mut self, idx: usize) -> T {
+        let old_len = [0m[36mself.len()[0m;
+
+        assert!(idx < old_len, "Index out of bounds");
+
+        unsafe {
+            [0m[36mself.set_len_non_singleton(old_len - 1)[0m;
+            let ptr = [0m[36mself.data_raw()[0m;
+            let val = [0m[31mptr::read([0m[36m[0m[36mself.data_raw()[0m[36m.add(idx)[0m[31m)[0m;
+            [0m[31mptr::copy([0m[36mptr.add(idx + 1)[0m[31m, [0m[36mptr.add(idx)[0m[31m, old_len - idx - 1)[0m;
+            val
+        }
+[0m
+Warning (UnsafeDataflow:/ReadFlow): Potential unsafe dataflow issue in `thin_vec::{thin_vec::ThinVec<T>[@TraitClause0]}#5::swap_remove`
+-> src/lib.rs:994:4-1005:5
+pub fn swap_remove(&mut self, idx: usize) -> T {
+        let old_len = [0m[36mself.len()[0m;
+
+        assert!(idx < old_len, "Index out of bounds");
+
+        unsafe {
+            let ptr = [0m[36mself.data_raw()[0m;
+            [0m[36mptr::swap([0m[36mptr.add(idx)[0m[36m, [0m[36mptr.add(old_len - 1)[0m[36m)[0m;
+            [0m[36mself.set_len_non_singleton(old_len - 1)[0m;
+            [0m[31mptr::read([0m[36mptr.add(old_len - 1)[0m[31m)[0m
+        }
+[0m
+Info (UnsafeDataflow:/SliceFromRaw): Potential unsafe dataflow issue in `thin_vec::{thin_vec::ThinVec<T>[@TraitClause0]}#5::as_slice`
+-> src/lib.rs:1101:4-1103:5
+pub fn as_slice(&self) -> &[T] {
+        unsafe { [0m[33mslice::from_raw_parts([0m[36mself.data_raw()[0m[33m, [0m[36mself.len()[0m[33m)[0m }
+[0m
+Info (UnsafeDataflow:/SliceFromRaw): Potential unsafe dataflow issue in `thin_vec::{thin_vec::ThinVec<T>[@TraitClause0]}#5::as_mut_slice`
+-> src/lib.rs:1117:4-1119:5
+pub fn as_mut_slice(&mut self) -> &mut [T] {
+        unsafe { [0m[33mslice::from_raw_parts_mut([0m[36mself.data_raw()[0m[33m, [0m[36mself.len()[0m[33m)[0m }
+[0m
+Warning (UnsafeDataflow:/CopyFlow): Potential unsafe dataflow issue in `thin_vec::{thin_vec::ThinVec<T>[@TraitClause0]}#5::split_off`
+-> src/lib.rs:1445:4-1461:5
+pub fn split_off(&mut self, at: usize) -> ThinVec<T> {
+        let old_len = [0m[36mself.len()[0m;
+        let new_vec_len = old_len - at;
+
+        assert!(at <= old_len, "Index out of bounds");
+
+        unsafe {
+            let mut new_vec = [0m[36mThinVec::with_capacity(new_vec_len)[0m;
+
+            [0m[31mptr::copy_nonoverlapping([0m[36m[0m[36mself.data_raw()[0m[36m.add(at)[0m[31m, [0m[36mnew_vec.data_raw()[0m[31m, new_vec_len)[0m;
+
+            [0m[36mnew_vec.set_len(new_vec_len)[0m; // could be the singleton
+            [0m[36mself.set_len(at)[0m; // could be the singleton
+
+            new_vec
+        }
+[0m
+Info (UnsafeDataflow:/SliceFromRaw): Potential unsafe dataflow issue in `thin_vec::{thin_vec::ThinVec<T>[@TraitClause0]}#5::drain`
+-> src/lib.rs:1516:4-1548:5
+pub fn drain<R>(&mut self, range: R) -> Drain<'_, T>
+    where
+        R: RangeBounds<usize>,
+    {
+        // See comments in the Drain struct itself for details on this
+        let len = [0m[36mself.len()[0m;
+        let start = match [0m[36mrange.start_bound()[0m {
+            Bound::Included(&n) => n,
+            Bound::Excluded(&n) => n + 1,
+            Bound::Unbounded => 0,
+        };
+        let end = match [0m[36mrange.end_bound()[0m {
+            Bound::Included(&n) => n + 1,
+            Bound::Excluded(&n) => n,
+            Bound::Unbounded => len,
+        };
+        assert!(start <= end);
+        assert!(end <= len);
+
+        unsafe {
+            // Set our length to the start bound
+            [0m[36mself.set_len(start)[0m; // could be the singleton
+
+            let iter = [0m[33m[0m[36mslice::from_raw_parts([0m[36m[0m[36mself.data_raw()[0m[36m.add(start)[0m[36m, end - start)[0m[36m.iter()[0m;
+
+            Drain {
+                iter,
+                vec: NonNull::from(self),
+                end,
+                tail: len - end,
+            }
+        }
+[0m
+Warning (UnsafeDataflow:/ReadFlow): Potential unsafe dataflow issue in `thin_vec::{impl core::convert::TryFrom<thin_vec::ThinVec<T>[@TraitClause0]> for Array<T, const N : usize>}#38::try_from`
+-> src/lib.rs:2423:4-2438:5
+fn try_from(mut vec: ThinVec<T>) -> Result<[T; N], ThinVec<T>> {
+        if [0m[36mvec.len()[0m != N {
+            return Err(vec);
+        }
+
+        // SAFETY: `.set_len(0)` is always sound.
+        unsafe { [0m[36mvec.set_len(0)[0m };
+
+        // SAFETY: A `ThinVec`'s pointer is always aligned properly, and
+        // the alignment the array needs is the same as the items.
+        // We checked earlier that we have sufficient items.
+        // The items will not double-drop as the `set_len`
+        // tells the `ThinVec` not to also drop them.
+        let array = unsafe { [0m[31mptr::read([0m[36mvec.data_raw()[0m[31m as *const [T; N])[0m };
+        Ok(array)
+[0m
+Info (UnsafeDataflow:/SliceFromRaw): Potential unsafe dataflow issue in `thin_vec::{thin_vec::IntoIter<T>[@TraitClause0]}#39::as_slice`
+-> src/lib.rs:2473:4-2475:5
+pub fn as_slice(&self) -> &[T] {
+        unsafe { [0m[33mslice::from_raw_parts([0m[36m[0m[36mself.vec.data_raw()[0m[36m.add(self.start)[0m[33m, [0m[36mself.len()[0m[33m)[0m }
+[0m
+Info (UnsafeDataflow:/SliceFromRaw): Potential unsafe dataflow issue in `thin_vec::{thin_vec::IntoIter<T>[@TraitClause0]}#39::as_raw_mut_slice`
+-> src/lib.rs:2496:4-2498:5
+fn as_raw_mut_slice(&mut self) -> *mut [T] {
+        unsafe { [0m[33mptr::slice_from_raw_parts_mut([0m[36m[0m[36mself.vec.data_raw()[0m[36m.add(self.start)[0m[33m, self.len())[0m }
+[0m
+Warning (UnsafeDataflow:/ReadFlow): Potential unsafe dataflow issue in `thin_vec::{impl core::iter::traits::iterator::Iterator for thin_vec::IntoIter<T>[@TraitClause0]}#40::next`
+-> src/lib.rs:2503:4-2513:5
+fn next(&mut self) -> Option<T> {
+        if self.start == [0m[36mself.vec.len()[0m {
+            None
+        } else {
+            unsafe {
+                let old_start = self.start;
+                self.start += 1;
+                Some([0m[31mptr::read([0m[36m[0m[36mself.vec.data_raw()[0m[36m.add(old_start)[0m[31m)[0m)
+            }
+        }
+[0m
+Warning (UnsafeDataflow:/CopyFlow): Potential unsafe dataflow issue in `thin_vec::{impl core::ops::drop::Drop for thin_vec::Drain<'a, T>[@TraitClause0]}#52::drop`
+-> src/lib.rs:2701:4-2718:5
+fn drop(&mut self) {
+        // Consume the rest of the iterator.
+        for _ in [0m[36m[0m[36mself.by_ref()[0m[36m[0m {}
+
+        // Move the tail over the drained items, and update the length.
+        unsafe {
+            let vec = self.vec.as_mut();
+
+            // Don't mutate the empty singleton!
+            if ![0m[36mvec.is_singleton()[0m {
+                let old_len = [0m[36mvec.len()[0m;
+                let start = [0m[36m[0m[36mvec.data_raw()[0m[36m.add(old_len)[0m;
+                let end = [0m[36m[0m[36mvec.data_raw()[0m[36m.add(self.end)[0m;
+                [0m[31mptr::copy(end, start, self.tail)[0m;
+                [0m[36mvec.set_len_non_singleton(old_len + self.tail)[0m;
+            }
+        }
+[0m
+Warning (UnsafeDataflow:/WriteFlow/SliceFromRaw): Potential unsafe dataflow issue in `thin_vec::{thin_vec::Drain<'_0, T>[@TraitClause0]}#60::fill`
+-> src/lib.rs:2938:4-2955:5
+unsafe fn fill<I: Iterator<Item = T>>(&mut self, replace_with: &mut I) -> bool {
+        let vec = unsafe { self.vec.as_mut() };
+        let range_start = [0m[36mvec.len()[0m;
+        let range_end = self.end;
+        let range_slice = unsafe {
+            [0m[33mslice::from_raw_parts_mut([0m[36m[0m[36mvec.data_raw()[0m[36m.add(range_start)[0m[33m, range_end - range_start)[0m
+        };
+
+        for place in [0m[36m[0m[36mrange_slice[0m[36m[0m {
+            if let Some(new_item) = [0m[36mreplace_with.next()[0m {
+                unsafe { [0m[33mptr::write(place, new_item)[0m };
+                [0m[36mvec.set_len([0m[36mvec.len()[0m[36m + 1)[0m;
+            } else {
+                return false;
+            }
+        }
+        true
+[0m
+Warning (UnsafeDataflow:/CopyFlow): Potential unsafe dataflow issue in `thin_vec::{thin_vec::Drain<'_0, T>[@TraitClause0]}#60::move_tail`
+-> src/lib.rs:2958:4-2970:5
+unsafe fn move_tail(&mut self, additional: usize) {
+        let vec = unsafe { self.vec.as_mut() };
+        let len = self.end + self.tail;
+        [0m[36mvec.reserve([0m[36mlen.checked_add(additional).unwrap_cap_overflow()[0m[36m)[0m;
+
+        let new_tail_start = self.end + additional;
+        unsafe {
+            let src = [0m[36m[0m[36mvec.data_raw()[0m[36m.add(self.end)[0m;
+            let dst = [0m[36m[0m[36mvec.data_raw()[0m[36m.add(new_tail_start)[0m;
+            [0m[31mptr::copy(src, dst, self.tail)[0m;
+        }
+        self.end = new_tail_start;
+[0m
+Warning (UnsafeDataflow:/ReadFlow/CopyFlow): Potential unsafe dataflow issue in `thin_vec::{impl core::iter::traits::iterator::Iterator for thin_vec::ExtractIf<'_0, T, F>[@TraitClause2, @TraitClause0]}#61::next`
+-> src/lib.rs:2995:4-3017:5
+fn next(&mut self) -> Option<T> {
+        unsafe {
+            let v = [0m[36mself.vec.data_raw()[0m;
+            while self.idx < self.end {
+                let i = self.idx;
+                let drained = [0m[36m(self.pred)(&mut *[0m[36mv.add(i)[0m[36m)[0m;
+                // Update the index *after* the predicate is called. If the index
+                // is updated prior and the predicate panics, the element at this
+                // index would be leaked.
+                self.idx += 1;
+                if drained {
+                    self.del += 1;
+                    return Some([0m[31mptr::read([0m[36mv.add(i)[0m[31m)[0m);
+                } else if self.del > 0 {
+                    let del = self.del;
+                    let src: *const T = [0m[36mv.add(i)[0m;
+                    let dst: *mut T = [0m[36mv.add(i - del)[0m;
+                    [0m[31mptr::copy_nonoverlapping(src, dst, 1)[0m;
+                }
+            }
+            None
+        }
+[0m
+Warning (UnsafeDataflow:/WriteFlow): Potential unsafe dataflow issue in `thin_vec::{impl core::clone::Clone for thin_vec::ThinVec<T>[@TraitClause0]}#27::clone::clone_non_singleton`
+-> src/lib.rs:2209:8-2225:9
+fn clone_non_singleton<T: Clone>(this: &ThinVec<T>) -> ThinVec<T> {
+            let len = [0m[36mthis.len()[0m;
+            let mut new_vec = [0m[36mThinVec::<T>::with_capacity(len)[0m;
+            let mut data_raw = [0m[36mnew_vec.data_raw()[0m;
+            for x in [0m[36m[0m[36m[0m[36m[0m[36mthis.iter()[0m[36m[0m[36m[0m[36m[0m {
+                unsafe {
+                    [0m[33mptr::write(data_raw, [0m[36mx.clone()[0m[33m)[0m;
+                    data_raw = [0m[36mdata_raw.add(1)[0m;
+                }
+            }
+            unsafe {
+                // `this` is not the singleton, but `new_vec` will be if
+                // `this` is empty.
+                [0m[36mnew_vec.set_len(len)[0m; // could be the singleton
+            }
+            new_vec
+[0m
+
+[[TOOL_END: charon_rudra]]
+
+
+
+============================================================
+### INDIVIDUAL TOOL ANALYSIS REPORT ###
+============================================================
+
+[RAPX]:
+  - Double Free (unique locations): 2
+  - Use-After-Free (unique locations): 4
+  - Dangling Pointer (unique locations): 2
+  - Detailed issues (merged by location):
+    * Dangling Pointer (confidence 99%) at src/lib.rs:1082
+      - MIR detail: Value _3(_, src/lib.rs:1084) and _1(self, src/lib.rs:1082) are alias.
+      - MIR detail: _3(_, src/lib.rs:1084) is dropped at BB2(src/lib.rs:1084); _1(self, src/lib.rs:1082) became dangling.
+    * Dangling Pointer (confidence 99%) at src/lib.rs:1586
+      - MIR detail: Value _4(_, src/lib.rs:1592) and _1(self, src/lib.rs:1586) are alias.
+      - MIR detail: _4(_, src/lib.rs:1592) is dropped at BB3(src/lib.rs:1594); _1(self, src/lib.rs:1586) became dangling.
+    * Double Free (confidence 99%) at src/lib.rs:1915
+      - MIR detail: Value _3(_, src/lib.rs:1917) and _14(_, src/lib.rs:1923) are alias.
+      - MIR detail: _3(_, src/lib.rs:1917) is dropped at BB2(src/lib.rs:1917); _14(_, src/lib.rs:1923) is dropped at BB9(src/lib.rs:1923).
+    * Double Free (confidence 99%) at src/lib.rs:2544
+      - MIR detail: Value _7(_, src/lib.rs:2547) and _2(vec, src/lib.rs:2546) are alias.
+      - MIR detail: _7(_, src/lib.rs:2547) is dropped at BB4(src/lib.rs:2547); _2(vec, src/lib.rs:2546) is dropped at BB6(src/lib.rs:2549).
+      - MIR detail: _7(_, src/lib.rs:2547) is dropped at BB4(src/lib.rs:2547); _2(vec, src/lib.rs:2546) is dropped at BB8(src/lib.rs:2549).
+    * Use-After-Free (confidence 99%) at src/lib.rs:1085
+      - MIR detail: Value _3(_, src/lib.rs:1084) and _11(_, src/lib.rs:1085) are alias.
+      - MIR detail: _3(_, src/lib.rs:1084) is dropped at BB2(src/lib.rs:1084); _11(_, src/lib.rs:1085) is used at BB3(src/lib.rs:1085).
+    * Use-After-Free (confidence 99%) at src/lib.rs:1919
+      - MIR detail: Value _3(_, src/lib.rs:1917) and _12(_, src/lib.rs:1919) are alias.
+      - MIR detail: _3(_, src/lib.rs:1917) is dropped at BB2(src/lib.rs:1917); _12(_, src/lib.rs:1919) is used at BB3(src/lib.rs:1919).
+    * Use-After-Free (confidence 99%) at src/lib.rs:1923
+      - MIR detail: Value _3(_, src/lib.rs:1917) and _16(_, src/lib.rs:1923) are alias.
+      - MIR detail: _3(_, src/lib.rs:1917) is dropped at BB2(src/lib.rs:1917); _16(_, src/lib.rs:1923) is used at BB6(src/lib.rs:1923).
+      - MIR detail: Value _3(_, src/lib.rs:1917) and _14(_, src/lib.rs:1923) are alias.
+      - MIR detail: _3(_, src/lib.rs:1917) is dropped at BB2(src/lib.rs:1917); _14(_, src/lib.rs:1923) is used at BB9(src/lib.rs:1923).
+      - MIR detail: Value _3(_, src/lib.rs:1917) and _19(_, src/lib.rs:1923) are alias.
+      - MIR detail: _3(_, src/lib.rs:1917) is dropped at BB2(src/lib.rs:1917); _19(_, src/lib.rs:1923) is used at BB7(src/lib.rs:1923).
+    * Use-After-Free (confidence 99%) at src/lib.rs:2548
+      - MIR detail: Value _7(_, src/lib.rs:2547) and _15(_, src/lib.rs:2548) are alias.
+      - MIR detail: _7(_, src/lib.rs:2547) is dropped at BB4(src/lib.rs:2547); _15(_, src/lib.rs:2548) is used at BB5(src/lib.rs:2548).
+      - MIR detail: Value _7(_, src/lib.rs:2547) and _2(vec, src/lib.rs:2546) are alias.
+      - MIR detail: _7(_, src/lib.rs:2547) is dropped at BB4(src/lib.rs:2547); _2(vec, src/lib.rs:2546) is used at BB5(src/lib.rs:2548).
+[SAFEDROP]:
+  - Double Free (occurs lines): 0
+  - Use After Free (occurs lines): 0
+  - Dangling Pointer (count): 0
+[CHARON_RUDRA]:
+  - Colored Output Statistics:
+    * Cyan: 124 tags
+    * Red: 24 tags
+    * Yellow: 21 tags
+  - Highlighted Statements (63 unique):
+    * [Cyan] let old_len = self.len();
+    * [Cyan] debug_assert!(old_len < self.capacity());
+    * [Yellow, Cyan] ptr::write(self.data_raw().add(old_len), val);
+    * [Cyan] self.set_len_non_singleton(old_len + 1);
+    * [Cyan] self.set_len_non_singleton(old_len - 1);
+    * [Red, Cyan] Some(ptr::read(self.data_raw().add(old_len - 1)))
+    * [Cyan] if old_len == self.capacity() {
+    * [Cyan] self.reserve(1);
+    * [Cyan] let ptr = self.data_raw();
+    * [Red, Cyan] ptr::copy(ptr.add(idx), ptr.add(idx + 1), old_len - idx);
+    * [Yellow, Cyan] ptr::write(ptr.add(idx), elem);
+    * [Red, Cyan] let val = ptr::read(self.data_raw().add(idx));
+    * [Red, Cyan] ptr::copy(ptr.add(idx + 1), ptr.add(idx), old_len - idx - 1);
+    * [Cyan] ptr::swap(ptr.add(idx), ptr.add(old_len - 1));
+    * [Red, Cyan] ptr::read(ptr.add(old_len - 1))
+    * [Yellow, Cyan] unsafe { slice::from_raw_parts(self.data_raw(), self.len()) }
+    * [Yellow, Cyan] unsafe { slice::from_raw_parts_mut(self.data_raw(), self.len()) }
+    * [Cyan] let mut new_vec = ThinVec::with_capacity(new_vec_len);
+    * [Red, Cyan] ptr::copy_nonoverlapping(self.data_raw().add(at), new_vec.data_raw(), new_vec_len);
+    * [Cyan] new_vec.set_len(new_vec_len); // could be the singleton
+    * [Cyan] self.set_len(at); // could be the singleton
+    * [Cyan] let len = self.len();
+    * [Cyan] let start = match range.start_bound() {
+    * [Cyan] let end = match range.end_bound() {
+    * [Cyan] self.set_len(start); // could be the singleton
+    * [Yellow, Cyan] let iter = slice::from_raw_parts(self.data_raw().add(start), end - start).iter();
+    * [Cyan] if vec.len() != N {
+    * [Cyan] unsafe { vec.set_len(0) };
+    * [Red, Cyan] let array = unsafe { ptr::read(vec.data_raw() as *const [T; N]) };
+    * [Yellow, Cyan] unsafe { slice::from_raw_parts(self.vec.data_raw().add(self.start), self.len()) }
+    * [Yellow, Cyan] unsafe { ptr::slice_from_raw_parts_mut(self.vec.data_raw().add(self.start), self.len()) }
+    * [Cyan] if self.start == self.vec.len() {
+    * [Red, Cyan] Some(ptr::read(self.vec.data_raw().add(old_start)))
+    * [Cyan] for _ in self.by_ref() {}
+    * [Cyan] if !vec.is_singleton() {
+    * [Cyan] let old_len = vec.len();
+    * [Cyan] let start = vec.data_raw().add(old_len);
+    * [Cyan] let end = vec.data_raw().add(self.end);
+    * [Red] ptr::copy(end, start, self.tail);
+    * [Cyan] vec.set_len_non_singleton(old_len + self.tail);
+    * [Cyan] let range_start = vec.len();
+    * [Yellow, Cyan] slice::from_raw_parts_mut(vec.data_raw().add(range_start), range_end - range_start)
+    * [Cyan] for place in range_slice {
+    * [Cyan] if let Some(new_item) = replace_with.next() {
+    * [Yellow] unsafe { ptr::write(place, new_item) };
+    * [Cyan] vec.set_len(vec.len() + 1);
+    * [Cyan] vec.reserve(len.checked_add(additional).unwrap_cap_overflow());
+    * [Cyan] let src = vec.data_raw().add(self.end);
+    * [Cyan] let dst = vec.data_raw().add(new_tail_start);
+    * [Red] ptr::copy(src, dst, self.tail);
+    * [Cyan] let v = self.vec.data_raw();
+    * [Cyan] let drained = (self.pred)(&mut *v.add(i));
+    * [Red, Cyan] return Some(ptr::read(v.add(i)));
+    * [Cyan] let src: *const T = v.add(i);
+    * [Cyan] let dst: *mut T = v.add(i - del);
+    * [Red] ptr::copy_nonoverlapping(src, dst, 1);
+    * [Cyan] let len = this.len();
+    * [Cyan] let mut new_vec = ThinVec::<T>::with_capacity(len);
+    * [Cyan] let mut data_raw = new_vec.data_raw();
+    * [Cyan] for x in this.iter() {
+    * [Yellow, Cyan] ptr::write(data_raw, x.clone());
+    * [Cyan] data_raw = data_raw.add(1);
+    * [Cyan] new_vec.set_len(len); // could be the singleton

@@ -1,0 +1,552 @@
+=== EXPERIMENT LOG: 2026-10-21 09:50:09.513718 ===
+
+[[TOOL_START: rapx]]
+STDOUT:
+warning: Dangling pointer detected.
+   --> src/common.rs:290:1
+    |
+290 | / pub fn truncate(&mut self, len: usize) {
+291 | |         let old_len = self.slice.len;
+292 | |
+293 | |         if len < old_len {
+294 | |             unsafe {
+295 | |                 ptr::drop_in_place(&mut self.slice[len..old_len]);
+296 | |             }
+297 | |
+298 | |             self.slice.len = len;
+299 | |         }
+300 | |     }
+    | |_____- Dangling pointer (confidence 50%): Location in file src/common.rs line 290.
+    | MIR detail: Value _9(_, src/common.rs:295) and _1(self, src/common.rs:290) are alias.
+    | MIR detail: _9(_, src/common.rs:295) is dropped at BB3(src/common.rs:295); _1(self, src/common.rs:290) became dangling.
+    |
+warning: Dangling pointer detected.
+   --> src/common.rs:376:1
+    |
+376 | / pub fn clear(&mut self) {
+377 | |         unsafe {
+378 | |             ptr::drop_in_place(&mut self.slice[..]);
+379 | |         }
+380 | |
+381 | |         self.slice.len = 0;
+382 | |     }
+    | |_____- Dangling pointer (confidence 50%): Location in file src/common.rs line 376.
+    | MIR detail: Value _4(_, src/common.rs:378) and _1(self, src/common.rs:376) are alias.
+    | MIR detail: _4(_, src/common.rs:378) is dropped at BB2(src/common.rs:378); _1(self, src/common.rs:376) became dangling.
+    |
+
+STDERR:
+   Compiling libc v0.2.186
+    Checking arenavec v0.1.1 (/Users/acidsun/arenavec)
+09:50:14|RAP|INFO|: Start analysis with RAPx.
+09:50:15|RAP|INFO|: ================================
+09:50:15|RAP|INFO|: Aliases found: {DefId(2:41410 ~ core[b783]::slice::raw::from_raw_parts_mut::precondition_check): MopFnAliasPairs { arg_size: 4, alias_set: {} }, DefId(0:302 ~ arenavec[a8f4]::region::{impl#9}::clone): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:14477 ~ core[b783]::slice::{impl#0}::iter_mut): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:138 ~ arenavec[a8f4]::common::{impl#19}::partial_cmp): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:226 ~ arenavec[a8f4]::region::{impl#5}::drop): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:100 ~ arenavec[a8f4]::common::{impl#12}::push): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }, MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:188 ~ arenavec[a8f4]::rc::{impl#3}::allocate_or_extend): MopFnAliasPairs { arg_size: 4, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:2583 ~ core[b783]::ptr::non_null::{impl#2}::dangling): MopFnAliasPairs { arg_size: 0, alias_set: {} }, DefId(2:16276 ~ core[b783]::alloc::layout::{impl#0}::align): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(3:137 ~ alloc[9043]::alloc::{impl#0}::alloc_impl): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(2:41409 ~ core[b783]::slice::raw::from_raw_parts::precondition_check): MopFnAliasPairs { arg_size: 4, alias_set: {} }, DefId(2:14476 ~ core[b783]::slice::{impl#0}::iter): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:2595 ~ core[b783]::ptr::non_null::{impl#3}::new): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:74 ~ arenavec[a8f4]::common::{impl#8}::into_iter): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:10939 ~ core[b783]::panicking::assert_failed): MopFnAliasPairs { arg_size: 4, alias_set: {} }, DefId(0:99 ~ arenavec[a8f4]::common::{impl#12}::swap_remove): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:16275 ~ core[b783]::alloc::layout::{impl#0}::size): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:262 ~ arenavec[a8f4]::rc::Arena::{constructor#0}): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:2594 ~ core[b783]::ptr::non_null::{impl#3}::new_unchecked): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:3047 ~ core[b783]::ptr::write): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:14311 ~ core[b783]::slice::raw::from_raw_parts_mut): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:27123 ~ core[b783]::ptr::non_null::{impl#3}::new_unchecked::precondition_check): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:98 ~ arenavec[a8f4]::common::{impl#12}::truncate): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(3:5761 ~ alloc[9043]::rc::{impl#9}::new): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:186 ~ arenavec[a8f4]::rc::{impl#3}::allocate): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:123 ~ arenavec[a8f4]::common::{impl#15}::deref): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:211 ~ arenavec[a8f4]::region::{impl#2}::weak): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:2606 ~ core[b783]::ptr::non_null::{impl#3}::as_ptr): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:299 ~ arenavec[a8f4]::region::{impl#8}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:85 ~ arenavec[a8f4]::common::{impl#10}::drop): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:2996 ~ core[b783]::ptr::drop_in_place): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:110 ~ arenavec[a8f4]::common::{impl#12}::extend_from_slice): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:47 ~ arenavec[a8f4]::common::{impl#2}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:286 ~ arenavec[a8f4]::region::{impl#6}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:160 ~ arenavec[a8f4]::common::allocate_or_extend_inner): MopFnAliasPairs { arg_size: 6, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 4, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 4, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 2, lhs_fields: [], right_local: 4, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:97 ~ arenavec[a8f4]::common::{impl#12}::reserve): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:5739 ~ core[b783]::cell::{impl#9}::set): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:109 ~ arenavec[a8f4]::common::{impl#12}::resize): MopFnAliasPairs { arg_size: 3, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [], right_local: 3, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:260 ~ arenavec[a8f4]::common::{impl#23}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:134 ~ arenavec[a8f4]::common::{impl#18}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(3:146 ~ alloc[9043]::alloc::exchange_malloc): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:222 ~ arenavec[a8f4]::region::{impl#4}::allocate_or_extend): MopFnAliasPairs { arg_size: 4, alias_set: {} }, DefId(0:96 ~ arenavec[a8f4]::common::{impl#12}::capacity): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(3:5847 ~ alloc[9043]::rc::{impl#18}::strong_count): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:184 ~ arenavec[a8f4]::rc::{impl#2}::drop): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(3:133 ~ alloc[9043]::alloc::dealloc): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:272 ~ arenavec[a8f4]::rc::{impl#6}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:3233 ~ core[b783]::cmp::PartialEq::ne): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:14308 ~ core[b783]::slice::raw::from_raw_parts): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:158 ~ arenavec[a8f4]::common::allocate_inner): MopFnAliasPairs { arg_size: 4, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:95 ~ arenavec[a8f4]::common::{impl#12}::with_capacity): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(3:132 ~ alloc[9043]::alloc::alloc): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:208 ~ arenavec[a8f4]::region::{impl#1}::drop): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:145 ~ arenavec[a8f4]::common::{impl#20}::into_iter): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:107 ~ arenavec[a8f4]::common::{impl#12}::resize_with): MopFnAliasPairs { arg_size: 3, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [], right_local: 3, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:3043 ~ core[b783]::ptr::read): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:220 ~ arenavec[a8f4]::region::{impl#4}::allocate): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:157 ~ arenavec[a8f4]::common::destroy_mapping_alloc): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:94 ~ arenavec[a8f4]::common::{impl#12}::new): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:182 ~ arenavec[a8f4]::rc::{impl#1}::deref): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:270 ~ arenavec[a8f4]::rc::{impl#5}::clone): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:56 ~ arenavec[a8f4]::common::{impl#4}::deref_mut): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:27194 ~ core[b783]::ub_checks::maybe_is_nonoverlapping::runtime): MopFnAliasPairs { arg_size: 4, alias_set: {} }, DefId(0:81 ~ arenavec[a8f4]::common::{impl#9}::into_iter): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:106 ~ arenavec[a8f4]::common::{impl#12}::split_off): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:43 ~ arenavec[a8f4]::common::{impl#1}::clone): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:156 ~ arenavec[a8f4]::common::destroy_mapping): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:14419 ~ core[b783]::slice::{impl#0}::len): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:118 ~ arenavec[a8f4]::common::{impl#14}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:206 ~ arenavec[a8f4]::region::{impl#0}::generation_token): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:294 ~ arenavec[a8f4]::region::ArenaHandle::{constructor#0}): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(3:671 ~ alloc[9043]::boxed::{impl#0}::new): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:2928 ~ core[b783]::ptr::mut_ptr::{impl#0}::add): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:105 ~ arenavec[a8f4]::common::{impl#12}::is_empty): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:5747 ~ core[b783]::cell::{impl#10}::get): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:67 ~ arenavec[a8f4]::common::{impl#7}::partial_cmp): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:3041 ~ core[b783]::ptr::replace): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:155 ~ arenavec[a8f4]::common::create_mapping_alloc): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:12354 ~ core[b783]::fmt::{impl#4}::new): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [1], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:205 ~ arenavec[a8f4]::region::{impl#0}::init_capacity): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:12253 ~ core[b783]::fmt::rt::{impl#0}::new_display): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:2990 ~ core[b783]::ptr::copy_nonoverlapping): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:104 ~ arenavec[a8f4]::common::{impl#12}::len): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:154 ~ arenavec[a8f4]::common::create_mapping): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:179 ~ arenavec[a8f4]::rc::{impl#0}::clear): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:292 ~ arenavec[a8f4]::region::{impl#7}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:103 ~ arenavec[a8f4]::common::{impl#12}::clear): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:216 ~ arenavec[a8f4]::region::{impl#3}::allocate_or_extend): MopFnAliasPairs { arg_size: 4, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:153 ~ arenavec[a8f4]::common::get_page_size): MopFnAliasPairs { arg_size: 0, alias_set: {} }, DefId(0:90 ~ arenavec[a8f4]::common::{impl#11}::iter_mut): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:13535 ~ core[b783]::slice::iter::{impl#6}::new): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:178 ~ arenavec[a8f4]::rc::{impl#0}::inner): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:27165 ~ core[b783]::ptr::copy_nonoverlapping::precondition_check): MopFnAliasPairs { arg_size: 5, alias_set: {} }, DefId(0:52 ~ arenavec[a8f4]::common::{impl#3}::deref): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:266 ~ arenavec[a8f4]::rc::{impl#4}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:253 ~ arenavec[a8f4]::common::{impl#22}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:39 ~ arenavec[a8f4]::common::{impl#0}::new_empty): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [2], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:102 ~ arenavec[a8f4]::common::{impl#12}::append): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:127 ~ arenavec[a8f4]::common::{impl#16}::deref_mut): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:278 ~ arenavec[a8f4]::rc::{impl#7}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:152 ~ arenavec[a8f4]::common::{impl#21}::into_iter): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:89 ~ arenavec[a8f4]::common::{impl#11}::iter): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:3000 ~ core[b783]::ptr::null_mut): MopFnAliasPairs { arg_size: 0, alias_set: {} }, DefId(0:177 ~ arenavec[a8f4]::rc::{impl#0}::init_capacity): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:114 ~ arenavec[a8f4]::common::{impl#13}::clone): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:10526 ~ core[b783]::option::{impl#0}::ok_or): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:13559 ~ core[b783]::slice::iter::{impl#12}::new): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:2836 ~ core[b783]::ptr::const_ptr::{impl#0}::is_aligned_to): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:101 ~ arenavec[a8f4]::common::{impl#12}::pop): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:38 ~ arenavec[a8f4]::common::{impl#0}::new): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [2], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:27176 ~ core[b783]::ptr::replace::precondition_check): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:63 ~ arenavec[a8f4]::common::{impl#6}::eq): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:214 ~ arenavec[a8f4]::region::{impl#3}::allocate): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }}
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|WARN|: Dangling pointer detected in function "truncate"
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|WARN|: Dangling pointer detected in function "clear"
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1; add to record.
+09:50:15|RAP|INFO|: Find a dangling pointer 1 during unwinding; add to record.
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.30s
+
+[[TOOL_END: rapx]]
+
+[[TOOL_START: safedrop]]
+STDOUT:
+
+STDERR:
+error[E0433]: failed to resolve: use of undeclared crate or module `libc`
+   --> src/common.rs:600:14
+    |
+600 |     unsafe { libc::sysconf(libc::_SC_PAGESIZE) as usize }
+    |              ^^^^ use of undeclared crate or module `libc`
+
+error[E0433]: failed to resolve: use of undeclared crate or module `libc`
+   --> src/common.rs:600:28
+    |
+600 |     unsafe { libc::sysconf(libc::_SC_PAGESIZE) as usize }
+    |                            ^^^^ use of undeclared crate or module `libc`
+
+error[E0433]: failed to resolve: use of undeclared crate or module `libc`
+   --> src/common.rs:621:9
+    |
+621 |         libc::mmap(
+    |         ^^^^ use of undeclared crate or module `libc`
+
+error[E0433]: failed to resolve: use of undeclared crate or module `libc`
+   --> src/common.rs:624:13
+    |
+624 |             libc::PROT_READ | libc::PROT_WRITE,
+    |             ^^^^ use of undeclared crate or module `libc`
+
+error[E0433]: failed to resolve: use of undeclared crate or module `libc`
+   --> src/common.rs:624:31
+    |
+624 |             libc::PROT_READ | libc::PROT_WRITE,
+    |                               ^^^^ use of undeclared crate or module `libc`
+
+error[E0433]: failed to resolve: use of undeclared crate or module `libc`
+   --> src/common.rs:625:13
+    |
+625 |             libc::MAP_ANON | libc::MAP_PRIVATE,
+    |             ^^^^ use of undeclared crate or module `libc`
+
+error[E0433]: failed to resolve: use of undeclared crate or module `libc`
+   --> src/common.rs:625:30
+    |
+625 |             libc::MAP_ANON | libc::MAP_PRIVATE,
+    |                              ^^^^ use of undeclared crate or module `libc`
+
+error[E0433]: failed to resolve: use of undeclared crate or module `libc`
+   --> src/common.rs:666:24
+    |
+666 |     let res = unsafe { libc::munmap(base.as_ptr() as *mut libc::c_void, capacity) };
+    |                        ^^^^ use of undeclared crate or module `libc`
+
+error[E0433]: failed to resolve: use of undeclared crate or module `libc`
+   --> src/common.rs:666:59
+    |
+666 |     let res = unsafe { libc::munmap(base.as_ptr() as *mut libc::c_void, capacity) };
+    |                                                           ^^^^ use of undeclared crate or module `libc`
+
+error: aborting due to 9 previous errors
+
+For more information about this error, try `rustc --explain E0433`.
+
+[[TOOL_END: safedrop]]
+
+[[TOOL_START: charon_rudra]]
+STDOUT:
+
+2026-10-21 09:50:18.433120 |INFO | [rudra-progress] UnsafeDataflow analysis started
+2026-10-21 09:50:18.434457 |INFO | [rudra-progress] UnsafeDataflow analysis finished
+
+STDERR:
+   Compiling libc v0.2.186
+   Compiling arenavec v0.1.1 (/Users/acidsun/arenavec)
+warning: Trait aliases are not supported
+ --> /rustc/730d5d4095a264ef5f7c0a0781eea68c15431d45/library/core/src/ptr/metadata.rs:81:1
+
+warning: Ignoring the following item due to a previous error: core::ptr::metadata::Thin
+ --> /rustc/730d5d4095a264ef5f7c0a0781eea68c15431d45/library/core/src/ptr/metadata.rs:81:1
+
+warning: `arenavec` (lib) generated 2 warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.12s
+
+Warning (UnsafeDataflow:/WriteFlow): Potential unsafe dataflow issue in `arenavec::common::{arenavec::common::Slice<T, H>[@TraitClause0, @TraitClause1]}::new`
+-> src/common.rs:75:4-89:5
+pub fn new(handle: H, len: usize) -> Self
+    where
+        T: Default,
+    {
+        let mut res = unsafe { [0m[36mSelf::new_empty(handle, len)[0m };
+        res.len = len;
+
+        for i in [0m[36m[0m[36m0..len[0m[36m[0m {
+            unsafe {
+                [0m[33mptr::write([0m[36mres.ptr.as_ptr().add(i)[0m[33m, [0m[36mT::default()[0m[33m)[0m;
+            }
+        }
+
+        res
+[0m
+Warning (UnsafeDataflow:/WriteFlow): Potential unsafe dataflow issue in `arenavec::common::{impl core::clone::Clone for arenavec::common::Slice<T, H>[@TraitClause0, @TraitClause1]}#1::clone`
+-> src/common.rs:108:4-122:5
+fn clone(&self) -> Self {
+        let ptr: NonNull<T> = [0m[36mself.handle.allocate(self.len)[0m;
+
+        for i in [0m[36m[0m[36m0..self.len[0m[36m[0m {
+            unsafe {
+                [0m[33mptr::write([0m[36mptr.as_ptr().add(i)[0m[33m, [0m[36m(*[0m[36mself.ptr.as_ptr().add(i)[0m[36m).clone()[0m[33m)[0m;
+            }
+        }
+
+        Slice {
+            ptr,
+            len: self.len,
+            handle: [0m[36mself.handle.clone()[0m,
+        }
+[0m
+Warning (UnsafeDataflow:/CopyFlow): Potential unsafe dataflow issue in `arenavec::common::{arenavec::common::SliceVec<T, H>[@TraitClause0, @TraitClause1]}#12::reserve`
+-> src/common.rs:256:4-281:5
+pub fn reserve(&mut self, additional: usize) {
+        let ptr = self.slice.ptr;
+        let size = self.slice.len + additional;
+
+        if self.capacity >= size {
+            return;
+        }
+
+        let mut new_capacity = if self.capacity > 0 { self.capacity } else { 4 };
+
+        while new_capacity < size {
+            new_capacity *= 2;
+        }
+
+        let new_ptr: NonNull<T> = [0m[36mself.slice.handle.allocate_or_extend(ptr, self.capacity, new_capacity)[0m;
+
+        if ptr != new_ptr {
+            unsafe {
+                [0m[31mptr::copy_nonoverlapping(ptr.as_ptr(), new_ptr.as_ptr(), [0m[36m[0m[36mself.slice.len()[0m[36m[0m[31m)[0m;
+            }
+
+            self.slice.ptr = new_ptr;
+        }
+
+        self.capacity = new_capacity;
+[0m
+Warning (UnsafeDataflow:/ReadFlow): Potential unsafe dataflow issue in `arenavec::common::{arenavec::common::SliceVec<T, H>[@TraitClause0, @TraitClause1]}#12::swap_remove`
+-> src/common.rs:306:4-314:5
+pub fn swap_remove(&mut self, index: usize) -> T {
+        let hole: *mut T = &mut [0m[36mself[0m[index];
+        self.slice.len -= 1;
+
+        unsafe {
+            let last = [0m[31mptr::read([0m[36mself.slice.ptr.as_ptr().add(self.slice.len)[0m[31m)[0m;
+            [0m[36mptr::replace(hole, last)[0m
+        }
+[0m
+Warning (UnsafeDataflow:/WriteFlow): Potential unsafe dataflow issue in `arenavec::common::{arenavec::common::SliceVec<T, H>[@TraitClause0, @TraitClause1]}#12::push`
+-> src/common.rs:327:4-343:5
+pub fn push(&mut self, elem: T) {
+        if self.slice.len == self.capacity {
+            let new_capacity = if self.capacity == 0 {
+                4
+            } else {
+                self.capacity * 2
+            };
+
+            [0m[36mself.reserve(new_capacity - self.capacity)[0m;
+        }
+
+        unsafe {
+            [0m[33mptr::write([0m[36mself.slice.ptr.as_ptr().add([0m[36m[0m[36mself.slice.len()[0m[36m[0m[36m)[0m[33m, elem)[0m;
+        }
+
+        self.slice.len = [0m[36m[0m[36mself.slice.len()[0m[36m[0m + 1;
+[0m
+Warning (UnsafeDataflow:/ReadFlow): Potential unsafe dataflow issue in `arenavec::common::{arenavec::common::SliceVec<T, H>[@TraitClause0, @TraitClause1]}#12::pop`
+-> src/common.rs:346:4-355:5
+pub fn pop(&mut self) -> Option<T> {
+        if [0m[36mself.is_empty()[0m {
+            return None;
+        }
+
+        unsafe {
+            self.slice.len -= 1;
+            Some([0m[31mptr::read([0m[36mself.slice.ptr.as_ptr().add(self.slice.len)[0m[31m)[0m)
+        }
+[0m
+Warning (UnsafeDataflow:/CopyFlow): Potential unsafe dataflow issue in `arenavec::common::{arenavec::common::SliceVec<T, H>[@TraitClause0, @TraitClause1]}#12::append`
+-> src/common.rs:358:4-371:5
+pub fn append(&mut self, other: &mut Self) {
+        let count = [0m[36mother.len()[0m;
+        [0m[36mself.reserve(count)[0m;
+        let len = [0m[36mself.len()[0m;
+
+        unsafe {
+            [0m[31mptr::copy_nonoverlapping(
+                other.slice.ptr.as_ptr(),
+                [0m[36mself.slice.ptr.as_ptr().add(len)[0m[31m,
+                count)[0m;
+        }
+
+        other.slice.len = 0;
+[0m
+Warning (UnsafeDataflow:/CopyFlow): Potential unsafe dataflow issue in `arenavec::common::{arenavec::common::SliceVec<T, H>[@TraitClause0, @TraitClause1]}#12::split_off`
+-> src/common.rs:400:4-415:5
+pub fn split_off(&mut self, at: usize) -> Self
+    where
+        H: Clone,
+    {
+        let mut ret = [0m[36mSelf::with_capacity([0m[36mself.slice.handle.clone()[0m[36m, self.slice.len - at)[0m;
+        ret.slice.len = self.slice.len - at;
+
+        unsafe {
+            [0m[31mptr::copy_nonoverlapping(
+                [0m[36mself.slice.ptr.as_ptr().add(at)[0m[31m,
+                ret.slice.ptr.as_ptr(),
+                [0m[36mret.len()[0m[31m)[0m;
+        }
+
+        ret
+[0m
+Warning (UnsafeDataflow:/WriteFlow): Potential unsafe dataflow issue in `arenavec::common::{arenavec::common::SliceVec<T, H>[@TraitClause0, @TraitClause1]}#12::resize_with`
+-> src/common.rs:418:4-443:5
+pub fn resize_with<F>(&mut self, len: usize, mut f: F)
+    where
+        F: FnMut() -> T,
+    {
+        let old_len = self.slice.len;
+
+        if self.capacity < len {
+            [0m[36mself.reserve(len - old_len)[0m;
+        }
+
+        for i in [0m[36m[0m[36mold_len..len.saturating_sub(1)[0m[36m[0m {
+            unsafe { [0m[33mptr::write([0m[36mself.slice.ptr.as_ptr().add(i)[0m[33m, [0m[36mf()[0m[33m)[0m }
+        }
+
+        if len > old_len {
+            unsafe {
+                [0m[33mptr::write([0m[36mself.slice.ptr.as_ptr().add(len - 1)[0m[33m, [0m[36mf()[0m[33m)[0m;
+            }
+        } else if len < old_len {
+            unsafe {
+                [0m[36mptr::drop_in_place(&mut [0m[36mself.slice[0m[36m[0m[36m[len..old_len][0m[36m)[0m;
+            }
+        }
+
+        self.slice.len = len;
+[0m
+Warning (UnsafeDataflow:/WriteFlow): Potential unsafe dataflow issue in `arenavec::common::{arenavec::common::SliceVec<T, H>[@TraitClause0, @TraitClause1]}#12::resize`
+-> src/common.rs:446:4-471:5
+pub fn resize(&mut self, len: usize, value: T)
+    where
+        T: Clone,
+    {
+        let old_len = self.slice.len;
+
+        if self.capacity < len {
+            [0m[36mself.reserve(len - old_len)[0m;
+        }
+
+        for i in [0m[36m[0m[36mold_len..len.saturating_sub(1)[0m[36m[0m {
+            unsafe { [0m[33mptr::write([0m[36mself.slice.ptr.as_ptr().add(i)[0m[33m, [0m[36mvalue.clone()[0m[33m)[0m }
+        }
+
+        if len > old_len {
+            unsafe {
+                [0m[33mptr::write([0m[36mself.slice.ptr.as_ptr().add(len - 1)[0m[33m, value)[0m;
+            }
+        } else if len < old_len {
+            unsafe {
+                [0m[36mptr::drop_in_place(&mut [0m[36mself.slice[0m[36m[0m[36m[len..old_len][0m[36m)[0m;
+            }
+        }
+
+        self.slice.len = len;
+[0m
+Warning (UnsafeDataflow:/WriteFlow): Potential unsafe dataflow issue in `arenavec::common::{impl core::clone::Clone for arenavec::common::SliceVec<T, H>[@TraitClause0, @TraitClause1]}#13::clone`
+-> src/common.rs:493:4-509:5
+fn clone(&self) -> Self {
+        let mut vec: SliceVec<T, H> =
+            [0m[36mSliceVec::with_capacity([0m[36mself.slice.handle.clone()[0m[36m, self.capacity)[0m;
+
+        for i in [0m[36m[0m[36m0..[0m[36m[0m[36mself.slice.len()[0m[36m[0m[36m[0m[36m[0m {
+            unsafe {
+                [0m[33mptr::write(
+                    [0m[36mvec.slice.ptr.as_ptr().add(i)[0m[33m,
+                    [0m[36m(*[0m[36mself.slice.ptr.as_ptr().add(i)[0m[36m).clone()[0m[33m,
+                )[0m;
+            }
+        }
+
+        vec.slice.len = [0m[36m[0m[36mself.slice.len()[0m[36m[0m;
+
+        vec
+[0m
+
+[[TOOL_END: charon_rudra]]
+
+
+
+============================================================
+### INDIVIDUAL TOOL ANALYSIS REPORT ###
+============================================================
+
+[RAPX]:
+  - Double Free (unique locations): 0
+  - Use-After-Free (unique locations): 0
+  - Dangling Pointer (unique locations): 2
+  - Detailed issues (merged by location):
+    * Dangling Pointer (confidence 50%) at src/common.rs:290
+      - MIR detail: Value _9(_, src/common.rs:295) and _1(self, src/common.rs:290) are alias.
+      - MIR detail: _9(_, src/common.rs:295) is dropped at BB3(src/common.rs:295); _1(self, src/common.rs:290) became dangling.
+    * Dangling Pointer (confidence 50%) at src/common.rs:376
+      - MIR detail: Value _4(_, src/common.rs:378) and _1(self, src/common.rs:376) are alias.
+      - MIR detail: _4(_, src/common.rs:378) is dropped at BB2(src/common.rs:378); _1(self, src/common.rs:376) became dangling.
+[SAFEDROP]:
+  - Double Free (occurs lines): 0
+  - Use After Free (occurs lines): 0
+  - Dangling Pointer (count): 0
+[CHARON_RUDRA]:
+  - Colored Output Statistics:
+    * Cyan: 84 tags
+    * Red: 11 tags
+    * Yellow: 22 tags
+  - Highlighted Statements (40 unique):
+    * [Cyan] let mut res = unsafe { Self::new_empty(handle, len) };
+    * [Cyan] for i in 0..len {
+    * [Yellow, Cyan] ptr::write(res.ptr.as_ptr().add(i), T::default());
+    * [Cyan] let ptr: NonNull<T> = self.handle.allocate(self.len);
+    * [Cyan] for i in 0..self.len {
+    * [Yellow, Cyan] ptr::write(ptr.as_ptr().add(i), (*self.ptr.as_ptr().add(i)).clone());
+    * [Cyan] handle: self.handle.clone(),
+    * [Cyan] let new_ptr: NonNull<T> = self.slice.handle.allocate_or_extend(ptr, self.capacity, new_capacity);
+    * [Red, Cyan] ptr::copy_nonoverlapping(ptr.as_ptr(), new_ptr.as_ptr(), self.slice.len());
+    * [Cyan] let hole: *mut T = &mut self[index];
+    * [Red, Cyan] let last = ptr::read(self.slice.ptr.as_ptr().add(self.slice.len));
+    * [Cyan] ptr::replace(hole, last)
+    * [Cyan] self.reserve(new_capacity - self.capacity);
+    * [Yellow, Cyan] ptr::write(self.slice.ptr.as_ptr().add(self.slice.len()), elem);
+    * [Cyan] self.slice.len = self.slice.len() + 1;
+    * [Cyan] if self.is_empty() {
+    * [Red, Cyan] Some(ptr::read(self.slice.ptr.as_ptr().add(self.slice.len)))
+    * [Cyan] let count = other.len();
+    * [Cyan] self.reserve(count);
+    * [Cyan] let len = self.len();
+    * [Red] ptr::copy_nonoverlapping(
+    * [Cyan, Red] self.slice.ptr.as_ptr().add(len),
+    * [Styled] count);
+    * [Cyan] let mut ret = Self::with_capacity(self.slice.handle.clone(), self.slice.len - at);
+    * [Cyan, Red] self.slice.ptr.as_ptr().add(at),
+    * [Cyan, Red] ret.len());
+    * [Cyan] self.reserve(len - old_len);
+    * [Cyan] for i in old_len..len.saturating_sub(1) {
+    * [Yellow, Cyan] unsafe { ptr::write(self.slice.ptr.as_ptr().add(i), f()) }
+    * [Yellow, Cyan] ptr::write(self.slice.ptr.as_ptr().add(len - 1), f());
+    * [Cyan] ptr::drop_in_place(&mut self.slice[len..old_len]);
+    * [Yellow, Cyan] unsafe { ptr::write(self.slice.ptr.as_ptr().add(i), value.clone()) }
+    * [Yellow, Cyan] ptr::write(self.slice.ptr.as_ptr().add(len - 1), value);
+    * [Cyan] SliceVec::with_capacity(self.slice.handle.clone(), self.capacity);
+    * [Cyan] for i in 0..self.slice.len() {
+    * [Yellow] ptr::write(
+    * [Cyan, Yellow] vec.slice.ptr.as_ptr().add(i),
+    * [Cyan, Yellow] (*self.slice.ptr.as_ptr().add(i)).clone(),
+    * [Styled] );
+    * [Cyan] vec.slice.len = self.slice.len();

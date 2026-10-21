@@ -1,0 +1,243 @@
+=== EXPERIMENT LOG: 2026-10-21 09:53:28.459444 ===
+
+[[TOOL_START: rapx]]
+STDOUT:
+warning: Double free detected.
+  --> src/lib.rs:66:1
+   |
+66 | / fn drop(&mut self) {
+67 | |         // SAFETY:
+68 | |         // * self being dropped right now, self.container is not used after taking the Box out of it
+69 | |         let container = unsafe { std::mem::ManuallyDrop::take(&mut self.container) };
+70 | |         let ptr = alloc::boxed::Box::into_raw(container);
+71 | |         // SAFETY:
+72 | |         // * value behind ptr is valid for R/W, properly aligned and valid to drop
+73 | |         // * dealloc is called with layout that has been used for allocation earlier
+74 | |         unsafe {
+75 | |             std::ptr::drop_in_place(ptr);
+76 | |             alloc::alloc::dealloc(ptr as *mut u8, self.layout);
+77 | |         }
+78 | |     }
+   | |_____- Double free (confidence 99%): Location in file src/lib.rs line 66.
+    | MIR detail: Value _8(_, src/lib.rs:75) and _10(_, src/lib.rs:76) are alias.
+    | MIR detail: _8(_, src/lib.rs:75) is dropped at BB2(src/lib.rs:75); _10(_, src/lib.rs:76) is dropped at BB3(src/lib.rs:76).
+   |
+warning: Use-after-free detected.
+  --> src/lib.rs:76:13
+   |
+66 | fn drop(&mut self) {
+67 |         // SAFETY:
+68 |         // * self being dropped right now, self.container is not used after taking the Box out of it
+69 |         let container = unsafe { std::mem::ManuallyDrop::take(&mut self.container) };
+70 |         let ptr = alloc::boxed::Box::into_raw(container);
+71 |         // SAFETY:
+72 |         // * value behind ptr is valid for R/W, properly aligned and valid to drop
+73 |         // * dealloc is called with layout that has been used for allocation earlier
+74 |         unsafe {
+75 |             std::ptr::drop_in_place(ptr);
+76 |             alloc::alloc::dealloc(ptr as *mut u8, self.layout);
+   |             -------------------------------------------------- Use-after-free (confidence 99%): Location in file src/lib.rs line 76.
+    | MIR detail: Value _8(_, src/lib.rs:75) and _10(_, src/lib.rs:76) are alias.
+    | MIR detail: _8(_, src/lib.rs:75) is dropped at BB2(src/lib.rs:75); _10(_, src/lib.rs:76) is used at BB3(src/lib.rs:76).
+77 |         }
+78 |     }
+   |
+
+STDERR:
+    Checking aligned_box v0.3.0 (/Users/acidsun/aligned_box)
+09:53:28|RAP|INFO|: Start analysis with RAPx.
+09:53:29|RAP|INFO|: ================================
+09:53:29|RAP|INFO|: Aliases found: {DefId(2:2996 ~ core[b783]::ptr::drop_in_place): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:41410 ~ core[b783]::slice::raw::from_raw_parts_mut::precondition_check): MopFnAliasPairs { arg_size: 4, alias_set: {} }, DefId(0:44 ~ aligned_box[92e0]::{impl#9}::realloc_with_default): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:6 ~ aligned_box[92e0]::{impl#1}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: false, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(3:748 ~ alloc[9043]::boxed::{impl#8}::into_raw): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:50 ~ aligned_box[92e0]::{impl#10}::realloc_with_value): MopFnAliasPairs { arg_size: 3, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [0], right_local: 3, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [], right_local: 3, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:31 ~ aligned_box[92e0]::{impl#7}::allocate::{closure#0}): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(3:134 ~ alloc[9043]::alloc::realloc): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:37 ~ aligned_box[92e0]::{impl#8}::realloc): MopFnAliasPairs { arg_size: 3, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [0], right_local: 3, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:16276 ~ core[b783]::alloc::layout::{impl#0}::align): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:12365 ~ core[b783]::fmt::{impl#6}::from_str): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:41409 ~ core[b783]::slice::raw::from_raw_parts::precondition_check): MopFnAliasPairs { arg_size: 4, alias_set: {} }, DefId(2:2158 ~ core[b783]::mem::manually_drop::{impl#0}::take): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:2888 ~ core[b783]::ptr::mut_ptr::{impl#0}::is_null): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:43 ~ aligned_box[92e0]::{impl#9}::slice_from_default::{closure#0}): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:27 ~ aligned_box[92e0]::{impl#6}::from_raw_parts): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:49 ~ aligned_box[92e0]::{impl#10}::slice_from_value::{closure#0}): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:12418 ~ core[b783]::fmt::{impl#12}::write_fmt): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [1], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:30 ~ aligned_box[92e0]::{impl#7}::allocate): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:14419 ~ core[b783]::slice::{impl#0}::len): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:14 ~ aligned_box[92e0]::{impl#2}::deref): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(3:133 ~ alloc[9043]::alloc::dealloc): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:2324 ~ core[b783]::mem::forget): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:17 ~ aligned_box[92e0]::{impl#3}::deref_mut): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:2928 ~ core[b783]::ptr::mut_ptr::{impl#0}::add): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:39 ~ aligned_box[92e0]::{impl#8}::realloc::{closure#0}): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:20 ~ aligned_box[92e0]::{impl#4}::drop): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:12367 ~ core[b783]::fmt::{impl#6}::as_statically_known_str): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:42 ~ aligned_box[92e0]::{impl#9}::slice_from_default): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(0:23 ~ aligned_box[92e0]::{impl#5}::clone): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:45 ~ aligned_box[92e0]::{impl#9}::realloc_with_default::{closure#0}): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(3:746 ~ alloc[9043]::boxed::{impl#8}::from_raw): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(0:26 ~ aligned_box[92e0]::{impl#6}::into_raw_parts): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:48 ~ aligned_box[92e0]::{impl#10}::slice_from_value): MopFnAliasPairs { arg_size: 3, alias_set: {} }, DefId(0:51 ~ aligned_box[92e0]::{impl#10}::realloc_with_value::{closure#0}): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:27123 ~ core[b783]::ptr::non_null::{impl#3}::new_unchecked::precondition_check): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(2:3047 ~ core[b783]::ptr::write): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 1, lhs_fields: [], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:32 ~ aligned_box[92e0]::{impl#7}::new): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: true }, MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 2, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:14311 ~ core[b783]::slice::raw::from_raw_parts_mut): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: false, rhs_may_drop: true, rhs_need_drop: false }} }, DefId(2:2836 ~ core[b783]::ptr::const_ptr::{impl#0}::is_aligned_to): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(3:132 ~ alloc[9043]::alloc::alloc): MopFnAliasPairs { arg_size: 1, alias_set: {} }, DefId(0:79 ~ aligned_box[92e0]::{impl#11}::fmt): MopFnAliasPairs { arg_size: 2, alias_set: {} }, DefId(2:11438 ~ core[b783]::result::{impl#0}::map_err): MopFnAliasPairs { arg_size: 2, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [0] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(0:35 ~ aligned_box[92e0]::{impl#8}::new_slice): MopFnAliasPairs { arg_size: 3, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 3, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }, DefId(2:2156 ~ core[b783]::mem::manually_drop::{impl#0}::new): MopFnAliasPairs { arg_size: 1, alias_set: {MopAliasPair { fact: AliasPair { left_local: 0, lhs_fields: [0], right_local: 1, rhs_fields: [] }, lhs_may_drop: true, lhs_need_drop: true, rhs_may_drop: true, rhs_need_drop: true }} }}
+09:53:29|RAP|WARN|: Find a use-after-free bug TyBug { drop_spot: LocalSpot { bb: Some(2), local: Some(8) }, trigger_info: LocalSpot { bb: Some(3), local: Some(10) }, prop_chain: [10], span: src/lib.rs:76:13: 76:63 (#0), confidence: 99 }; add to records
+09:53:29|RAP|INFO|: Find a double free bug 10; add to records.
+09:53:29|RAP|WARN|: Double free detected in function "drop"
+09:53:29|RAP|WARN|: Use-after-free detected in function "drop"
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.36s
+
+[[TOOL_END: rapx]]
+
+[[TOOL_START: safedrop]]
+STDOUT:
+
+STDERR:
+
+[[TOOL_END: safedrop]]
+
+[[TOOL_START: charon_rudra]]
+STDOUT:
+
+2026-10-21 09:53:31.259952 |INFO | [rudra-progress] UnsafeDataflow analysis started
+2026-10-21 09:53:31.260631 |INFO | [rudra-progress] UnsafeDataflow analysis finished
+
+STDERR:
+   Compiling aligned_box v0.3.0 (/Users/acidsun/aligned_box)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.12s
+
+Warning (UnsafeDataflow:/WriteFlow): Potential unsafe dataflow issue in `aligned_box::{impl core::clone::Clone for aligned_box::AlignedBox<T>}#5::clone`
+-> src/lib.rs:82:4-104:5
+fn clone(&self) -> Self {
+        // SAFETY:
+        // layout is certainly valid as it has already been used to create self
+        let ptr = unsafe { alloc::alloc::alloc(self.layout) as *mut T };
+        if ptr.is_null() {
+            panic!("Failed to allocate memory for a clone of AlignedBox");
+        }
+
+        // SAFETY:
+        // * The pointer is non-null, refers to properly sized and aligned memory and it is
+        //   consumed such that it cannot be used from anywhere outside the Box. There is no
+        //   aliasing with other pointers.
+        let mut b = unsafe { AlignedBox::<T>::from_raw_parts(ptr, self.layout) };
+
+        // *b is not a valid instance of T but uninitialized memory. We have to write to it without
+        // dropping the old (invalid) value. Also the original value must not be dropped.
+        // SAFETY:
+        // * *b points to valid and properly aligned memory and clone() also provides us with
+        //   a valid value.
+        unsafe { [0m[33mstd::ptr::write(&mut *b, [0m[36m(**self.container).clone()[0m[33m)[0m };
+
+        b
+[0m
+Info (UnsafeDataflow:/SliceFromRaw): Potential unsafe dataflow issue in `aligned_box::{aligned_box::AlignedBox<Slice<T>>}#8::realloc`
+-> src/lib.rs:249:4-326:5
+unsafe fn realloc(
+        &mut self,
+        nelems: usize,
+        initializer: impl Fn(*mut T),
+    ) -> std::result::Result<(), AlignedBoxError> {
+        // Make sure the requested amount of Ts will fit into a slice.
+        let maxelems = (isize::MAX as usize) / [0m[36mstd::mem::size_of::<T>()[0m;
+        if nelems > maxelems {
+            return Err(AlignedBoxError::TooManyElements);
+        }
+
+        let memsize: usize = [0m[36mstd::mem::size_of::<T>()[0m * nelems;
+        if memsize == 0 {
+            return Err(AlignedBoxError::ZeroAlloc);
+        }
+
+        let old_nelems = [0m[36mself.container.len()[0m;
+        let new_layout = [0m[36m[0m[36m[0m[36malloc::alloc::Layout::from_size_align(memsize, self.layout.align()).map_err(|_| AlignedBoxError::InvalidAlign)[0m[36m?[0m[36m[0m;
+
+        // SAFETY:
+        // * self.container is not used afterwards but re-assigned with a new
+        //   instance of std::mem::ManuallyDrop<alloc::boxed::Box> in all possible cases.
+        let b = unsafe { [0m[36mstd::mem::ManuallyDrop::take(&mut self.container)[0m };
+        let ptr = [0m[36malloc::boxed::Box::into_raw(b)[0m;
+
+        // Drop any values that will be deallocated by realloc
+        for i in [0m[36m[0m[36mnelems..old_nelems[0m[36m[0m {
+            // SAFETY:
+            // * (*ptr)[i] is valid for R/W, properly aligned and valid to drop
+            // * the element will not be read as it will either be re-initialized using
+            //   std::ptr::write or the slice behind ptr will not be used anymore.
+            [0m[36mstd::ptr::drop_in_place(&mut (*ptr)[i])[0m;
+        }
+
+        // SAFETY:
+        // * ptr has been assigned by the same (that is: global) allocator
+        // * layout has been used to allocate ptr
+        // * new_size > 0 has been explicitly checked before
+        // * due to the restrictions of a slice, memsize does not even overflow isize::MAX
+        let new_ptr =
+            unsafe { alloc::alloc::realloc(ptr as *mut u8, self.layout, memsize) as *mut T };
+
+        if new_ptr.is_null() {
+            // realloc failed. We need to restore a valid state and return an error.
+
+            // Reinitialize previously dropped values. The caller must ensure that
+            // initializer does not expect valid values behind ptr.
+            for i in [0m[36m[0m[36mnelems..old_nelems[0m[36m[0m {
+                [0m[36minitializer(&mut (*ptr)[i])[0m;
+            }
+
+            // SAFETY:
+            // * Nobody owns the memory behind ptr right now.
+            let b = unsafe { alloc::boxed::Box::from_raw(ptr) };
+            self.container = [0m[36mstd::mem::ManuallyDrop::new(b)[0m;
+            return Err(AlignedBoxError::OutOfMemory);
+        }
+
+        // Initialize newly allocated values. The caller must ensure that
+        // initializer does not expect valid values behind ptr.
+        for i in [0m[36m[0m[36mold_nelems..nelems[0m[36m[0m {
+            [0m[36minitializer([0m[36mnew_ptr.add(i)[0m[36m)[0m;
+        }
+
+        // Create a new slice, a new Box and update layout.
+        // SAFETY:
+        // * new_ptr is non-null, nelems does not exceed the maximum size.
+        // * The referenced memory is not accessed via other pointers as long as slice exists.
+        // * All nelems values behind new_ptr are properly initialized.
+        let slice = unsafe { [0m[33mstd::slice::from_raw_parts_mut(new_ptr, nelems)[0m };
+        // SAFETY:
+        // * Nobody else references this slice or the ptr behind it.
+        let b = unsafe { alloc::boxed::Box::from_raw(slice) };
+        self.container = [0m[36mstd::mem::ManuallyDrop::new(b)[0m;
+        self.layout = new_layout;
+
+        Ok(())
+[0m
+Warning (UnsafeDataflow:/WriteFlow): Potential unsafe dataflow issue in `aligned_box::{aligned_box::AlignedBox<Slice<T>>}#9::slice_from_default::closure`
+-> src/lib.rs:350:60-356:13
+|ptr: *mut T| {
+                let d = [0m[36mT::default()[0m; // create new default value
+
+                // Write to ptr without dropping the old value. Also d must not be dropped.
+                // SAFETY: ptr points to valid and properly aligned memory.
+                [0m[33mstd::ptr::write(ptr, d)[0m
+[0m
+Warning (UnsafeDataflow:/WriteFlow): Potential unsafe dataflow issue in `aligned_box::{aligned_box::AlignedBox<Slice<T>>}#9::realloc_with_default::closure`
+-> src/lib.rs:385:33-391:13
+|ptr: *mut T| {
+                let d = [0m[36mT::default()[0m; // create new default value
+
+                // Write to ptr without dropping the old value. Also d must not be dropped.
+                // SAFETY: ptr points to valid and properly aligned memory.
+                [0m[33mstd::ptr::write(ptr, d)[0m
+[0m
+
+[[TOOL_END: charon_rudra]]
+
+
+
+============================================================
+### INDIVIDUAL TOOL ANALYSIS REPORT ###
+============================================================
+
+[RAPX]:
+  - Double Free (unique locations): 1
+  - Use-After-Free (unique locations): 1
+  - Dangling Pointer (unique locations): 0
+  - Detailed issues (merged by location):
+    * Double Free (confidence 99%) at src/lib.rs:66
+      - MIR detail: Value _8(_, src/lib.rs:75) and _10(_, src/lib.rs:76) are alias.
+      - MIR detail: _8(_, src/lib.rs:75) is dropped at BB2(src/lib.rs:75); _10(_, src/lib.rs:76) is dropped at BB3(src/lib.rs:76).
+    * Use-After-Free (confidence 99%) at src/lib.rs:76
+      - MIR detail: Value _8(_, src/lib.rs:75) and _10(_, src/lib.rs:76) are alias.
+      - MIR detail: _8(_, src/lib.rs:75) is dropped at BB2(src/lib.rs:75); _10(_, src/lib.rs:76) is used at BB3(src/lib.rs:76).
+[SAFEDROP]:
+  - Double Free (occurs lines): 0
+  - Use After Free (occurs lines): 0
+  - Dangling Pointer (count): 0
+[CHARON_RUDRA]:
+  - Colored Output Statistics:
+    * Cyan: 29 tags
+    * Yellow: 5 tags
+  - Highlighted Statements (16 unique):
+    * [Yellow, Cyan] unsafe { std::ptr::write(&mut *b, (**self.container).clone()) };
+    * [Cyan] let maxelems = (isize::MAX as usize) / std::mem::size_of::<T>();
+    * [Cyan] let memsize: usize = std::mem::size_of::<T>() * nelems;
+    * [Cyan] let old_nelems = self.container.len();
+    * [Cyan] let new_layout = alloc::alloc::Layout::from_size_align(memsize, self.layout.align()).map_err(|_| AlignedBoxError::InvalidAlign)?;
+    * [Cyan] let b = unsafe { std::mem::ManuallyDrop::take(&mut self.container) };
+    * [Cyan] let ptr = alloc::boxed::Box::into_raw(b);
+    * [Cyan] for i in nelems..old_nelems {
+    * [Cyan] std::ptr::drop_in_place(&mut (*ptr)[i]);
+    * [Cyan] initializer(&mut (*ptr)[i]);
+    * [Cyan] self.container = std::mem::ManuallyDrop::new(b);
+    * [Cyan] for i in old_nelems..nelems {
+    * [Cyan] initializer(new_ptr.add(i));
+    * [Yellow] let slice = unsafe { std::slice::from_raw_parts_mut(new_ptr, nelems) };
+    * [Cyan] let d = T::default(); // create new default value
+    * [Yellow] std::ptr::write(ptr, d)

@@ -1,0 +1,271 @@
+======================================================================
+=== AGGREGATE REPORT ===
+======================================================================
+Generated: 2026-10-20 18:56:35
+
+======================================================================
+### CASES STARTING WITH '1' ###
+======================================================================
+
+Successful cases (14): 1.1.1_level1_single, 1.1.2_level1_single, 1.2.1_level1_2owner, 1.2.2_level1_2owner, 1.2.3_level1_2owner, 1.3.1_level1_2borrow, 1.3.2_level1_2borrow, 1.3.3_level1_2borrow, 1.4.1_level1_3owner, 1.4.2_level1_3owner, 1.4.3_level1_3owner, 1.5.1_level1_3borrow, 1.5.2_level1_3borrow, 1.5.3_level1_3borrow
+
+[RAPX]:
+  - Double Free (unique locations): 8
+  - Use-After-Free (unique locations): 5
+
+[SAFEDROP]:
+  - Double Free (occurs lines): 4
+  - Use After Free (occurs lines): 0
+
+[CHARON_RUDRA]:
+  - Color tag totals:
+    * Cyan: 12
+    * Yellow: 9
+    * [Cyan] let raw_ptr = Box::into_raw(leaf);
+    * [Yellow] let r2:&Box<i32> = std::mem::transmute(&r1);
+    * [Cyan] drop(r1);
+    * [Cyan] println!("{:?}", &*r2);
+    * [Yellow] let r3:&Box<i32> = std::mem::transmute(&r2);
+
+[KANI]:
+  - Total Failed Checks: 16
+    * Function `memcpy` with missing definition is unreachable at /Users/acidsun/.kani/kani-0.65.0/library/kani/kani_lib.c:9
+    * dereference failure: pointer invalid at src/main.rs:15
+    * free argument must be NULL or valid pointer at /Users/acidsun/.kani/kani-0.65.0/library/kani/kani_lib.c:87
+    * double free at /Users/acidsun/.kani/kani-0.65.0/library/kani/kani_lib.c:87
+    * dereference failure: pointer invalid at src/main.rs:14
+
+[MIRI]:
+  - Total errors: 10
+  - Undefined Behavior errors: 10
+  - Error details:
+    * Undefined Behavior: trying to retag from <786> for SharedReadOnly permission at alloc368[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: trying to retag from <786> for Unique permission at alloc367[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: pointer not dereferenceable: alloc281 has been freed, so this pointer is dangling
+    * Undefined Behavior: memory access failed: alloc280 has been freed, so this pointer is dangling
+    * Undefined Behavior: constructing invalid value of type std::boxed::Box<i32>: encountered a dangling box (use-after-free)
+    * Undefined Behavior: trying to retag from <644> for Unique permission at alloc281[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: trying to retag from <644> for Unique permission at alloc280[0x0], but that tag does not exist in the borrow stack for this location
+
+======================================================================
+### CASES STARTING WITH '2' ###
+======================================================================
+
+Successful cases (64): 2.1.1_level2_single, 2.1.2_level2_single, 2.1.3_level2_single, 2.1.4_level2_single, 2.1.5_level2_single, 2.1.6_level2_single, 2.1.7_level2_single, 2.1.8_level2_single, 2.1.9_level2_single, 2.1.10_level2_single, 2.1.11_level2_single, 2.1.12_level2_single, 2.2.1_level2_2owner, 2.2.2_level2_2owner, 2.2.3_level2_2owner, 2.2.4_level2_2owner, 2.2.5_level2_2owner, 2.2.6_level2_2owner, 2.2.7_level2_2owner, 2.2.8_level2_2owner, 2.2.9_level2_2owner, 2.2.10_level2_2owner, 2.2.11_level2_2owner, 2.2.12_level2_2owner, 2.2.13_level2_2owner, 2.3.1_level2_2borrow, 2.3.2_level2_2borrow, 2.3.3_level2_2borrow, 2.3.4_level2_2borrow, 2.3.5_level2_2borrow, 2.3.6_level2_2borrow, 2.3.7_level2_2borrow, 2.3.8_level2_2borrow, 2.3.9_level2_2borrow, 2.3.10_level2_2borrow, 2.3.11_level2_2borrow, 2.3.12_level2_2borrow, 2.3.13_level2_2borrow, 2.4.1_level2_3owner, 2.4.2_level2_3owner, 2.4.3_level2_3owner, 2.4.4_level2_3owner, 2.4.5_level2_3owner, 2.4.6_level2_3owner, 2.4.7_level2_3owner, 2.4.8_level2_3owner, 2.4.9_level2_3owner, 2.4.10_level2_3owner, 2.4.11_level2_3owner, 2.4.12_level2_3owner, 2.4.13_level2_3owner, 2.5.1_level2_3borrow, 2.5.2_level2_3borrow, 2.5.3_level2_3borrow, 2.5.4_level2_3borrow, 2.5.5_level2_3borrow, 2.5.6_level2_3borrow, 2.5.7_level2_3borrow, 2.5.8_level2_3borrow, 2.5.9_level2_3borrow, 2.5.10_level2_3borrow, 2.5.11_level2_3borrow, 2.5.12_level2_3borrow, 2.5.13_level2_3borrow
+
+[RAPX]:
+  - Double Free (unique locations): 52
+  - Use-After-Free (unique locations): 23
+
+[SAFEDROP]:
+  - Double Free (occurs lines): 31
+  - Use After Free (occurs lines): 0
+
+[CHARON_RUDRA]:
+  - Color tag totals:
+    * Cyan: 42
+    * Yellow: 36
+    * [Yellow] leaf1: unsafe{std::mem::transmute(&r1.leaf1)},
+    * [Cyan] drop(r1);
+    * [Cyan] println!("{:?}", &*ptr0);//accessing r3
+    * [Cyan] println!("{:?}", &*ptr1);//accessing r3.leaf1
+    * [Cyan] println!("{:?}", &*ptr2);//accessing r3.leaf2
+    * [Cyan] drop(r1.leaf1);
+    * [Cyan] drop(r1.leaf2);
+    * [Yellow] leaf1: unsafe{std::mem::transmute(&r2.leaf1)},
+
+[KANI]:
+  - Total Failed Checks: 75
+    * dereference failure: pointer invalid at src/main.rs:25
+    * dereference failure: pointer invalid at src/main.rs:26
+    * free argument must be NULL or valid pointer at /Users/acidsun/.kani/kani-0.65.0/library/kani/kani_lib.c:87
+    * double free at /Users/acidsun/.kani/kani-0.65.0/library/kani/kani_lib.c:87
+    * dereference failure: pointer invalid at src/main.rs:30
+    * dereference failure: pointer invalid at src/main.rs:33
+    * dereference failure: pointer invalid at src/main.rs:32
+    * rust_dealloc must be called on an object whose allocated size matches its layout at /Users/acidsun/.kani/kani-0.65.0/library/kani/kani_lib.c:85
+
+[MIRI]:
+  - Total errors: 50
+  - Undefined Behavior errors: 50
+  - Error details:
+    * Undefined Behavior: constructing invalid value of type std::boxed::Box<i32>: encountered a dangling box (use-after-free)
+    * Undefined Behavior: pointer not dereferenceable: alloc284 has been freed, so this pointer is dangling
+    * Undefined Behavior: pointer not dereferenceable: alloc334 has been freed, so this pointer is dangling
+    * Undefined Behavior: trying to retag from <701> for Unique permission at alloc284[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: trying to retag from <701> for Unique permission at alloc283[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: memory access failed: alloc284 has been freed, so this pointer is dangling
+    * Undefined Behavior: memory access failed: alloc283 has been freed, so this pointer is dangling
+    * Undefined Behavior: pointer not dereferenceable: alloc285 has been freed, so this pointer is dangling
+    * Undefined Behavior: trying to retag from <662> for Unique permission at alloc348[0x0], but that tag only grants SharedReadOnly permission for this location
+    * Undefined Behavior: trying to retag from <662> for Unique permission at alloc347[0x0], but that tag only grants SharedReadOnly permission for this location
+
+======================================================================
+### CASES STARTING WITH '3' ###
+======================================================================
+
+Successful cases (85): 3.1.1_level3_single, 3.1.2_level3_single, 3.1.3_level3_single, 3.1.4_level3_single, 3.1.5_level3_single, 3.1.6_level3_single, 3.1.7_level3_single, 3.1.8_level3_single, 3.1.9_level3_single, 3.1.10_level3_single, 3.1.11_level3_single, 3.1.12_level3_single, 3.1.13_level3_single, 3.1.14_level3_single, 3.1.15_level3_single, 3.2.1_level3_2owner, 3.2.2_level3_2owner, 3.2.3_level3_2owner, 3.2.4_level3_2owner, 3.2.5_level3_2owner, 3.2.6_level3_2owner, 3.2.7_level3_2owner, 3.2.8_level3_2owner, 3.2.9_level3_2owner, 3.2.10_level3_2owner, 3.2.11_level3_2owner, 3.2.12_level3_2owner, 3.2.13_level3_2owner, 3.2.14_level3_2owner, 3.2.15_level3_2owner, 3.2.16_level3_2owner, 3.3.1_level3_2borrow, 3.3.2_level3_2borrow, 3.3.3_level3_2borrow, 3.3.4_level3_2borrow, 3.3.5_level3_2borrow, 3.3.6_level3_2borrow, 3.3.7_level3_2borrow, 3.3.8_level3_2borrow, 3.3.9_level3_2borrow, 3.3.10_level3_2borrow, 3.3.11_level3_2borrow, 3.3.12_level3_2borrow, 3.3.13_level3_2borrow, 3.3.14_level3_2borrow, 3.3.15_level3_2borrow, 3.3.16_level3_2borrow, 3.4.1_level3_3owner, 3.4.2_level3_3owner, 3.4.3_level3_3owner, 3.4.4_level3_3owner, 3.4.5_level3_3owner, 3.4.6_level3_3owner, 3.4.7_level3_3owner, 3.4.8_level3_3owner, 3.4.9_level3_3owner, 3.4.10_level3_3owner, 3.4.11_level3_3owner, 3.4.12_level3_3owner, 3.4.13_level3_3owner, 3.4.14_level3_3owner, 3.4.15_level3_3owner, 3.4.16_level3_3owner, 3.5.1_level3_3borrow, 3.5.2_level3_3borrow, 3.5.3_level3_3borrow, 3.5.4_level3_3borrow, 3.5.5_level3_3borrow, 3.5.6_level3_3borrow, 3.5.7_level3_3borrow, 3.5.8_level3_3borrow, 3.5.9_level3_3borrow, 3.5.10_level3_3borrow, 3.5.11_level3_3borrow, 3.5.12_level3_3borrow, 3.5.13_level3_3borrow, 3.5.14_level3_3borrow, 3.5.15_level3_3borrow, 3.5.16_level3_3borrow, 3.6.1, 3.6.2, 3.6.3, 3.6.4, 3.6.5, 3.6.6
+
+[RAPX]:
+  - Double Free (unique locations): 70
+  - Use-After-Free (unique locations): 89
+
+[SAFEDROP]:
+  - Double Free (occurs lines): 41
+  - Use After Free (occurs lines): 12
+
+[CHARON_RUDRA]:
+  - Color tag totals:
+    * Cyan: 96
+    * Yellow: 55
+    * [Yellow] node: unsafe{std::mem::transmute(&r1.node)},
+    * [Cyan] drop(r1);
+    * [Cyan] println!("{:?}", &*ptr0);//accessing r2
+    * [Cyan] println!("{:?}", &*ptr1);//accessing r2.node
+    * [Cyan] println!("{:?}", &*ptr2);//accessing r2.node.leaf
+    * [Cyan] println!("{:?}", &*ptr3);//accessing r2.leaf
+    * [Cyan] drop(r1.node);
+    * [Cyan] drop(r1.node.leaf);
+    * [Cyan] let raw_ptr: *mut Node = Box::into_raw(Box::new(node));
+    * [Yellow] let r3: &Root = unsafe{std::mem::transmute(&r2)};
+    * [Cyan] println!("{:?}", &*ptr0);//accessing r3
+    * [Yellow] node: unsafe{std::mem::transmute(&r2.node)},
+    * [Cyan] println!("{:?}", &*ptr1);//accessing r3.node
+    * [Cyan] println!("{:?}", &*ptr2);//accessing r3.node.leaf
+    * [Cyan] println!("{:?}", &*ptr3);//accessing r3.leaf
+    * [Cyan] let raw_ptr1: *mut Node = Box::into_raw(Box::new(node1));
+    * [Yellow] let r3_1: &Root = unsafe{std::mem::transmute(&r2_1)};
+
+[KANI]:
+  - Total Failed Checks: 232
+    * dereference failure: pointer invalid at src/main.rs:32
+    * dereference failure: pointer invalid at src/main.rs:33
+    * dereference failure: pointer invalid at src/main.rs:34
+    * dereference failure: pointer invalid at /Users/runner/.rustup/toolchains/nightly-2025-08-06-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/ptr/mod.rs:804
+    * free argument must be NULL or valid pointer at /Users/acidsun/.kani/kani-0.65.0/library/kani/kani_lib.c:87
+    * double free at /Users/acidsun/.kani/kani-0.65.0/library/kani/kani_lib.c:87
+    * dereference failure: deallocated dynamic object at /Users/runner/.rustup/toolchains/nightly-2025-08-06-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/boxed.rs:1661
+    * dereference failure: deallocated dynamic object at /Users/runner/.rustup/toolchains/nightly-2025-08-06-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/ptr/mod.rs:804
+    * rust_dealloc must be called on an object whose allocated size matches its layout at /Users/acidsun/.kani/kani-0.65.0/library/kani/kani_lib.c:85
+    * dereference failure: pointer invalid at src/main.rs:36
+    * dereference failure: pointer invalid at src/main.rs:37
+    * dereference failure: pointer invalid at src/main.rs:35
+    * dereference failure: pointer invalid at src/main.rs:44
+    * dereference failure: pointer invalid at src/main.rs:45
+    * dereference failure: pointer invalid at src/main.rs:43
+
+[MIRI]:
+  - Total errors: 80
+  - Undefined Behavior errors: 80
+  - Error details:
+    * Undefined Behavior: constructing invalid value of type std::boxed::Box<Node>: encountered a dangling box (use-after-free)
+    * Undefined Behavior: pointer not dereferenceable: alloc330 has been freed, so this pointer is dangling
+    * Undefined Behavior: pointer not dereferenceable: alloc285 has been freed, so this pointer is dangling
+    * Undefined Behavior: pointer not dereferenceable: alloc379 has been freed, so this pointer is dangling
+    * Undefined Behavior: constructing invalid value of type std::boxed::Box<i32>: encountered a dangling box (use-after-free)
+    * Undefined Behavior: trying to retag from <761> for Unique permission at alloc331[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: trying to retag from <761> for Unique permission at alloc330[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: attempting a read access using <761> at alloc331[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: attempting a read access using <761> at alloc330[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: trying to retag from <722> for Unique permission at alloc394[0x0], but that tag only grants SharedReadOnly permission for this location
+    * Undefined Behavior: trying to retag from <722> for Unique permission at alloc393[0x0], but that tag only grants SharedReadOnly permission for this location
+
+======================================================================
+### ALL CASES ###
+======================================================================
+
+Successful cases (163): 1.1.1_level1_single, 1.1.2_level1_single, 1.2.1_level1_2owner, 1.2.2_level1_2owner, 1.2.3_level1_2owner, 1.3.1_level1_2borrow, 1.3.2_level1_2borrow, 1.3.3_level1_2borrow, 1.4.1_level1_3owner, 1.4.2_level1_3owner, 1.4.3_level1_3owner, 1.5.1_level1_3borrow, 1.5.2_level1_3borrow, 1.5.3_level1_3borrow, 2.1.1_level2_single, 2.1.2_level2_single, 2.1.3_level2_single, 2.1.4_level2_single, 2.1.5_level2_single, 2.1.6_level2_single, 2.1.7_level2_single, 2.1.8_level2_single, 2.1.9_level2_single, 2.1.10_level2_single, 2.1.11_level2_single, 2.1.12_level2_single, 2.2.1_level2_2owner, 2.2.2_level2_2owner, 2.2.3_level2_2owner, 2.2.4_level2_2owner, 2.2.5_level2_2owner, 2.2.6_level2_2owner, 2.2.7_level2_2owner, 2.2.8_level2_2owner, 2.2.9_level2_2owner, 2.2.10_level2_2owner, 2.2.11_level2_2owner, 2.2.12_level2_2owner, 2.2.13_level2_2owner, 2.3.1_level2_2borrow, 2.3.2_level2_2borrow, 2.3.3_level2_2borrow, 2.3.4_level2_2borrow, 2.3.5_level2_2borrow, 2.3.6_level2_2borrow, 2.3.7_level2_2borrow, 2.3.8_level2_2borrow, 2.3.9_level2_2borrow, 2.3.10_level2_2borrow, 2.3.11_level2_2borrow, 2.3.12_level2_2borrow, 2.3.13_level2_2borrow, 2.4.1_level2_3owner, 2.4.2_level2_3owner, 2.4.3_level2_3owner, 2.4.4_level2_3owner, 2.4.5_level2_3owner, 2.4.6_level2_3owner, 2.4.7_level2_3owner, 2.4.8_level2_3owner, 2.4.9_level2_3owner, 2.4.10_level2_3owner, 2.4.11_level2_3owner, 2.4.12_level2_3owner, 2.4.13_level2_3owner, 2.5.1_level2_3borrow, 2.5.2_level2_3borrow, 2.5.3_level2_3borrow, 2.5.4_level2_3borrow, 2.5.5_level2_3borrow, 2.5.6_level2_3borrow, 2.5.7_level2_3borrow, 2.5.8_level2_3borrow, 2.5.9_level2_3borrow, 2.5.10_level2_3borrow, 2.5.11_level2_3borrow, 2.5.12_level2_3borrow, 2.5.13_level2_3borrow, 3.1.1_level3_single, 3.1.2_level3_single, 3.1.3_level3_single, 3.1.4_level3_single, 3.1.5_level3_single, 3.1.6_level3_single, 3.1.7_level3_single, 3.1.8_level3_single, 3.1.9_level3_single, 3.1.10_level3_single, 3.1.11_level3_single, 3.1.12_level3_single, 3.1.13_level3_single, 3.1.14_level3_single, 3.1.15_level3_single, 3.2.1_level3_2owner, 3.2.2_level3_2owner, 3.2.3_level3_2owner, 3.2.4_level3_2owner, 3.2.5_level3_2owner, 3.2.6_level3_2owner, 3.2.7_level3_2owner, 3.2.8_level3_2owner, 3.2.9_level3_2owner, 3.2.10_level3_2owner, 3.2.11_level3_2owner, 3.2.12_level3_2owner, 3.2.13_level3_2owner, 3.2.14_level3_2owner, 3.2.15_level3_2owner, 3.2.16_level3_2owner, 3.3.1_level3_2borrow, 3.3.2_level3_2borrow, 3.3.3_level3_2borrow, 3.3.4_level3_2borrow, 3.3.5_level3_2borrow, 3.3.6_level3_2borrow, 3.3.7_level3_2borrow, 3.3.8_level3_2borrow, 3.3.9_level3_2borrow, 3.3.10_level3_2borrow, 3.3.11_level3_2borrow, 3.3.12_level3_2borrow, 3.3.13_level3_2borrow, 3.3.14_level3_2borrow, 3.3.15_level3_2borrow, 3.3.16_level3_2borrow, 3.4.1_level3_3owner, 3.4.2_level3_3owner, 3.4.3_level3_3owner, 3.4.4_level3_3owner, 3.4.5_level3_3owner, 3.4.6_level3_3owner, 3.4.7_level3_3owner, 3.4.8_level3_3owner, 3.4.9_level3_3owner, 3.4.10_level3_3owner, 3.4.11_level3_3owner, 3.4.12_level3_3owner, 3.4.13_level3_3owner, 3.4.14_level3_3owner, 3.4.15_level3_3owner, 3.4.16_level3_3owner, 3.5.1_level3_3borrow, 3.5.2_level3_3borrow, 3.5.3_level3_3borrow, 3.5.4_level3_3borrow, 3.5.5_level3_3borrow, 3.5.6_level3_3borrow, 3.5.7_level3_3borrow, 3.5.8_level3_3borrow, 3.5.9_level3_3borrow, 3.5.10_level3_3borrow, 3.5.11_level3_3borrow, 3.5.12_level3_3borrow, 3.5.13_level3_3borrow, 3.5.14_level3_3borrow, 3.5.15_level3_3borrow, 3.5.16_level3_3borrow, 3.6.1, 3.6.2, 3.6.3, 3.6.4, 3.6.5, 3.6.6
+
+[RAPX]:
+  - Double Free (unique locations): 130
+  - Use-After-Free (unique locations): 117
+
+[SAFEDROP]:
+  - Double Free (occurs lines): 76
+  - Use After Free (occurs lines): 12
+
+[CHARON_RUDRA]:
+  - Color tag totals:
+    * Cyan: 150
+    * Yellow: 100
+    * [Cyan] let raw_ptr = Box::into_raw(leaf);
+    * [Yellow] let r2:&Box<i32> = std::mem::transmute(&r1);
+    * [Cyan] drop(r1);
+    * [Cyan] println!("{:?}", &*r2);
+    * [Yellow] let r3:&Box<i32> = std::mem::transmute(&r2);
+    * [Yellow] leaf1: unsafe{std::mem::transmute(&r1.leaf1)},
+    * [Cyan] println!("{:?}", &*ptr0);//accessing r3
+    * [Cyan] println!("{:?}", &*ptr1);//accessing r3.leaf1
+    * [Cyan] println!("{:?}", &*ptr2);//accessing r3.leaf2
+    * [Cyan] drop(r1.leaf1);
+    * [Cyan] drop(r1.leaf2);
+    * [Yellow] leaf1: unsafe{std::mem::transmute(&r2.leaf1)},
+    * [Yellow] node: unsafe{std::mem::transmute(&r1.node)},
+    * [Cyan] println!("{:?}", &*ptr0);//accessing r2
+    * [Cyan] println!("{:?}", &*ptr1);//accessing r2.node
+    * [Cyan] println!("{:?}", &*ptr2);//accessing r2.node.leaf
+    * [Cyan] println!("{:?}", &*ptr3);//accessing r2.leaf
+    * [Cyan] drop(r1.node);
+    * [Cyan] drop(r1.node.leaf);
+    * [Cyan] let raw_ptr: *mut Node = Box::into_raw(Box::new(node));
+    * [Yellow] let r3: &Root = unsafe{std::mem::transmute(&r2)};
+    * [Yellow] node: unsafe{std::mem::transmute(&r2.node)},
+    * [Cyan] println!("{:?}", &*ptr1);//accessing r3.node
+    * [Cyan] println!("{:?}", &*ptr2);//accessing r3.node.leaf
+    * [Cyan] println!("{:?}", &*ptr3);//accessing r3.leaf
+    * [Cyan] let raw_ptr1: *mut Node = Box::into_raw(Box::new(node1));
+    * [Yellow] let r3_1: &Root = unsafe{std::mem::transmute(&r2_1)};
+
+[KANI]:
+  - Total Failed Checks: 323
+    * Function `memcpy` with missing definition is unreachable at /Users/acidsun/.kani/kani-0.65.0/library/kani/kani_lib.c:9
+    * dereference failure: pointer invalid at src/main.rs:15
+    * free argument must be NULL or valid pointer at /Users/acidsun/.kani/kani-0.65.0/library/kani/kani_lib.c:87
+    * double free at /Users/acidsun/.kani/kani-0.65.0/library/kani/kani_lib.c:87
+    * dereference failure: pointer invalid at src/main.rs:14
+    * dereference failure: pointer invalid at src/main.rs:25
+    * dereference failure: pointer invalid at src/main.rs:26
+    * dereference failure: pointer invalid at src/main.rs:30
+    * dereference failure: pointer invalid at src/main.rs:33
+    * dereference failure: pointer invalid at src/main.rs:32
+    * rust_dealloc must be called on an object whose allocated size matches its layout at /Users/acidsun/.kani/kani-0.65.0/library/kani/kani_lib.c:85
+    * dereference failure: pointer invalid at src/main.rs:34
+    * dereference failure: pointer invalid at /Users/runner/.rustup/toolchains/nightly-2025-08-06-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/ptr/mod.rs:804
+    * dereference failure: deallocated dynamic object at /Users/runner/.rustup/toolchains/nightly-2025-08-06-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/boxed.rs:1661
+    * dereference failure: deallocated dynamic object at /Users/runner/.rustup/toolchains/nightly-2025-08-06-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/ptr/mod.rs:804
+    * dereference failure: pointer invalid at src/main.rs:36
+    * dereference failure: pointer invalid at src/main.rs:37
+    * dereference failure: pointer invalid at src/main.rs:35
+    * dereference failure: pointer invalid at src/main.rs:44
+    * dereference failure: pointer invalid at src/main.rs:45
+    * dereference failure: pointer invalid at src/main.rs:43
+
+[MIRI]:
+  - Total errors: 140
+  - Undefined Behavior errors: 140
+  - Error details:
+    * Undefined Behavior: trying to retag from <786> for SharedReadOnly permission at alloc368[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: trying to retag from <786> for Unique permission at alloc367[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: pointer not dereferenceable: alloc281 has been freed, so this pointer is dangling
+    * Undefined Behavior: memory access failed: alloc280 has been freed, so this pointer is dangling
+    * Undefined Behavior: constructing invalid value of type std::boxed::Box<i32>: encountered a dangling box (use-after-free)
+    * Undefined Behavior: trying to retag from <644> for Unique permission at alloc281[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: trying to retag from <644> for Unique permission at alloc280[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: pointer not dereferenceable: alloc284 has been freed, so this pointer is dangling
+    * Undefined Behavior: pointer not dereferenceable: alloc334 has been freed, so this pointer is dangling
+    * Undefined Behavior: trying to retag from <701> for Unique permission at alloc284[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: trying to retag from <701> for Unique permission at alloc283[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: memory access failed: alloc284 has been freed, so this pointer is dangling
+    * Undefined Behavior: memory access failed: alloc283 has been freed, so this pointer is dangling
+    * Undefined Behavior: pointer not dereferenceable: alloc285 has been freed, so this pointer is dangling
+    * Undefined Behavior: trying to retag from <662> for Unique permission at alloc348[0x0], but that tag only grants SharedReadOnly permission for this location
+    * Undefined Behavior: trying to retag from <662> for Unique permission at alloc347[0x0], but that tag only grants SharedReadOnly permission for this location
+    * Undefined Behavior: constructing invalid value of type std::boxed::Box<Node>: encountered a dangling box (use-after-free)
+    * Undefined Behavior: pointer not dereferenceable: alloc330 has been freed, so this pointer is dangling
+    * Undefined Behavior: pointer not dereferenceable: alloc379 has been freed, so this pointer is dangling
+    * Undefined Behavior: trying to retag from <761> for Unique permission at alloc331[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: trying to retag from <761> for Unique permission at alloc330[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: attempting a read access using <761> at alloc331[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: attempting a read access using <761> at alloc330[0x0], but that tag does not exist in the borrow stack for this location
+    * Undefined Behavior: trying to retag from <722> for Unique permission at alloc394[0x0], but that tag only grants SharedReadOnly permission for this location
+    * Undefined Behavior: trying to retag from <722> for Unique permission at alloc393[0x0], but that tag only grants SharedReadOnly permission for this location
