@@ -1,7 +1,3 @@
-### Test Cases
-
-The suite of test cases are in `case` and each file contains several cases.
-
 ### Analysis Tool (Lazy_update Version)
 
 The automated detection tool is implemented as a module of **RAPx** – a static analysis platform for Rust code.
@@ -160,8 +156,22 @@ next:
 $pathtothisversion/cargo-rapx rapx check -f
 ```
 
+### Test Cases
+
+The suite of test cases are in `case`.
+
+
 #### Experiment
 1. Create a new rust project **`test_tools`**
 2. Copy folder **`./case`**(with 163 cases) and `./report/report_for_cases/bench_tools_com.py` into **`test_tools`**
 3. Update the tool invocation command in `bench_tools_com.py` to a version compatible with your environment
+```python
+COMMANDS = [
+    ("rapx", "cargo +nightly-2025-12-06 rapx check -f"),
+    ("safedrop", "rustc +safedrop src/main.rs"),
+    ("charon_rudra", "charon --ullbc && cargo-charon-rudra --file test_tools.ullbc"),
+    ("miri", "cargo +nightly miri run"),
+    ("kani", "cargo kani --output-format terse"),
+]
+```
 4. Run `bench_tools_com.py` to get an individual report for all cases and an aggregate one
