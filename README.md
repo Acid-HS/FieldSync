@@ -6,8 +6,6 @@ The automated detection tool is implemented as a module of **RAPx** – a static
 
 Core implementation: **`./tool/`**
 
-Eager-update version: **`./tool-eager/`**
-
 #### Installation
 
 1. Prerequisites: Ensure the Rust version specified in `rust-toolchain.toml` is installed.
@@ -134,6 +132,10 @@ warning: Use-after-free detected.
 ```
 
 ### Analysis Tool (Eager-Update Version)
+
+#### Source Code
+
+Eager-update version: **`./tool-eager/`**
 
 #### Installation
 
